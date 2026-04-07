@@ -1,0 +1,3414 @@
+
+<!DOCTYPE html>
+
+<html lang="zh-Hans">
+
+<head>
+  <meta charset="UTF-8">
+<title>Tags</title>
+
+  <!-- 引入 Bootstrap 样式 -->
+  <link href="https://fonts.googleapis.com/css2?family=Zhi+Mang+Xing&display=swap" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Zhi+Mang+Xing&family=Ma+Shan+Zheng&family=Long+Cang&family=Noto+Serif+SC&family=Noto+Sans+SC&display=swap"
+    rel="stylesheet">
+
+
+  <!-- 引入 jQuery 库 -->
+   <!-- <script src="https://cdn.tailwindcss.com"></script> -->
+  <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/opencc-js@1.0.5/dist/umd/full.js"></script>
+  <!-- <script src="https://unpkg.com/compromise"></script> -->
+
+  <!-- 引入 Bootstrap Icons 图标库 -->
+
+  <!-- 引入 FileSaver.js 库 -->
+
+  <script src="https://cdn.bootcdn.net/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.1/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.1/ScrollTrigger.min.js"></script>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/list.js@1.5.0/dist/list.min.js"></script>
+
+
+  <link rel="stylesheet" href="./css/tags3_2.css">
+  <link href="https://fonts.googleapis.com/css2?family=Dancing+Script&display=swap" rel="stylesheet">
+
+</head>
+<script></script>
+<style>
+</style>
+
+
+</head>
+
+<body>
+<div id="sticky" class="sticky">
+
+  <button data-bs-toggle="collapse" data-bs-target="#tagscount">C</button>
+  <div id="tagscount" class="collapse"></div>
+  <button id="toggleButton">A-Z</button>
+  <button id="loginBtn">Google 登入</button>
+  <button id="status">尚未登入</button>
+  
+  <button id="logoutBtn">登出</button>
+  <button id="zhToggleBtn">繁→简</button>
+</div>
+
+  <div id="list" class="list">
+
+    <!-- Tag Input and Add -->
+
+    <textarea id="tag-input" rows="1" placeholder="Add..."></textarea>
+    <button id="add-tag-btn">Add</button>
+
+
+    <input type="text" id="search-input" placeholder="Search Tags">
+
+    <button data-bs-toggle="collapse" data-bs-target="#collapse">C</button>
+
+
+    <!-- Save / Load / Export / Import -->
+    <button id="save-btn">Save</button>
+    <button id="load-btn">Load</button>
+
+    <button id="remove-duplicates">Duplicates</button>
+    <button id="export-btn-formobile" onclick="exportBtnformobile()">Export</button>
+    <button id="import-btn">Import</button>
+    <input type="file" id="import-file-input" accept=".json" hidden>
+
+
+    <!-- Extra Features -->
+    <randomize-button></randomize-button>
+    <reverse-tags id="reverse-btn"></reverse-tags>
+          <button id="undo-btn">Undo</button>
+    <button id="sort-length-btn">Sort Length</button>
+
+    <!-- Stats -->
+    <h4 id="totalnumbers"></h4>
+
+    <!-- Collapsible Advanced Options -->
+    <div id="collapse" class="collapse">
+      <button id="cutboard">Cut</button>
+      <button id="exportImgTagsBtn">Ex Img</button>
+      <button id="ToggleClassesbtn">Classes</button>
+    <button id="toggleWordLookup">Word-Lookup: OFF</button>
+    <button id="toggleimgtext">Wordmarks: OFF</button>
+
+
+    <button id="sortCommonEnglishSentenceLastBtn" class="btn btn-info">
+           Sort Common English (sentences last)
+    </button>
+
+   <label class="ms-2">
+      Sentence min words:
+    <input
+    id="sentenceMinWordsInput"
+    type="number"
+    min="1"
+    step="1"
+    value="2"
+    style="width: 70px;"
+     />
+    </label>
+
+<select id="gridModeSelect">
+  <option value="grid-list" selected>List</option>
+  <option value="grid-2">Grid 2</option>
+  <option value="grid-3" >Grid 3</option>
+  <option value="grid-4">Grid 4</option>
+  <option value="grid-masonry">Masonry (simple)</option>
+  <option value="split-img-text">Split Img/Text</option>
+</select>
+<button id="toggleHideMode">Hide: ON</button>
+      <fullscreen-toggle label="Fullscreen"></fullscreen-toggle>
+      <my-font-selector theme="dark"></my-font-selector>
+      <my-width-selector
+        options="100,200,220,260,280,300,320,340,360,380,400,420,440,460,480,500,520,540,560,580,600,620,640,660,680,760,780,860,880,900,1000,1100,1200,1400"></my-width-selector>
+      <my-height-selector
+        options="100,200,220,260,280,300,320,340,360,380,400,420,440,460,480,500,520,540,560,580,600,620,640,660,680,760,780,860,880,900,1000,1100,1200,1400"></my-width-selector>
+    </div>
+    <div>
+    </div>
+  </div>
+  <!-- Tag List -->
+<!-- Normal mode list -->
+<ul id="tag-list" class="tag-list" ondblclick="focustaglist()"></ul>
+
+<!-- Split mode container -->
+<div id="splitWrap" class="split-wrap tag-list" style="display:none;">
+  <div class="split-col">
+    <div id="splitPaginationImg"class="tag-list"></div>
+    <ul id="tag-list-img" ></ul>
+  </div>
+
+  <div class="split-col">
+    <div id="splitPaginationText" class="tag-list"></div>
+    <ul id="tag-list-text"></ul>
+  </div>
+</div>
+
+<div id="pagination" class="pagination"></div>
+
+  <!-- Mobile Shortcut -->
+  <button id="mobilebtn">O</button>
+
+  <div id="snackbar"></div>
+
+  <!-- Scripts -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/Draggable.min.js"></script>
+  <script src="./js/web component/tags_randomize-button.js"></script>
+  <script src="./js/web component/my-font-selector.js"></script>
+  <script src="./js/web component/my-width-selector.js"></script>
+  <script src="./js/web component/my-height-selector.js"></script>
+  <script src="./js/web component/fullscreen-toggle.js"></script>
+  <script src="./js/web component/reverse-tags.js"></script>
+  <script src="./js/web component/translateword.js"></script>
+  <script src="./js/web component/WORDMARKS.js"></script>
+
+
+  <script type="module">
+
+    "use strict";    
+    const paginationDiv = document.getElementById("pagination");
+    // const stickyDiv = document.getElementById("sticky");
+
+    const collapse = document.getElementById('collapse');
+    const tagInput = document.getElementById('tag-input');
+    const tagListDiv = document.getElementById('tag-list');
+    const tagscount = document.getElementById('tagscount');
+    const addTagBtn = document.getElementById('add-tag-btn');
+    const searchInput = document.getElementById('search-input');
+
+    const exportBtnformobile = document.getElementById('export-btn-formobile');
+    const cutboard = document.getElementById('cutboard');
+    const importFileInput = document.getElementById('import-file-input');
+    const importBtn = document.getElementById('import-btn');
+    const undoBtn = document.getElementById('undo-btn');
+    const sortLengthBtn = document.getElementById('sort-length-btn');
+    const removeduplicates = document.querySelector('#remove-duplicates');
+    const copyTagsBtn = document.getElementById('copy-tags-btn');
+    const ToggleClassesbtn = document.getElementById('ToggleClassesbtn');
+
+    // ===== Hide feature state =====
+let hideModeOn = true;                 // 全域 ON/OFF
+let hiddenIds = new Set();             // store tag.id
+
+// optional persistence
+const HIDE_STORE_KEY = "tags_hidden_ids_v1";
+function loadHiddenIds() {
+  try {
+    const raw = localStorage.getItem(HIDE_STORE_KEY);
+    const arr = raw ? JSON.parse(raw) : [];
+    hiddenIds = new Set(Array.isArray(arr) ? arr : []);
+  } catch {
+    hiddenIds = new Set();
+  }
+}
+function saveHiddenIds() {
+  try {
+    localStorage.setItem(HIDE_STORE_KEY, JSON.stringify([...hiddenIds]));
+  } catch {}
+}
+
+function isTagHidden(tag) {
+  return !!tag?.id && hiddenIds.has(tag.id);
+}
+
+function setTagHidden(tag, hidden) {
+  if (!tag?.id) return;
+  if (hidden) hiddenIds.add(tag.id);
+  else hiddenIds.delete(tag.id);
+  saveHiddenIds();
+}
+
+// 開頁就載入（如果你唔想 persistence，可以刪呢行）
+loadHiddenIds();
+
+    const toggleHideModeBtn = document.getElementById("toggleHideMode");
+if (toggleHideModeBtn) {
+  toggleHideModeBtn.textContent = `Hide: ${hideModeOn ? "ON" : "OFF"}`;
+  toggleHideModeBtn.addEventListener("click", () => {
+    hideModeOn = !hideModeOn;
+    toggleHideModeBtn.textContent = `Hide: ${hideModeOn ? "ON" : "OFF"}`;
+    renderTags(); // 重新 render，立即套用/取消隱藏
+  });
+}
+    
+    document.addEventListener('reverse-tags', () => {
+      const reversedTags = [...tagList].reverse();
+      undoStack.push({ type: 'reverse', tags: [...tagList] });
+      tagList.splice(0, tagList.length, ...reversedTags);
+      renderTags();
+    });
+
+    document.addEventListener("randomize-tags", () => {
+      // Fisher–Yates Shuffle
+      const shuffledTags = [...tagList];
+      for (let i = shuffledTags.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffledTags[i], shuffledTags[j]] = [shuffledTags[j], shuffledTags[i]];
+      }
+
+      // 存 undo
+      undoStack.push({ type: "randomize", tags: [...tagList] });
+
+      // 替換資料
+      tagList.splice(0, tagList.length, ...shuffledTags);
+
+      // 更新 UI
+      renderTags();
+    });    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+
+    import {
+      getStorage,
+      ref,
+      uploadBytes,
+      getDownloadURL,
+      listAll,
+      deleteObject
+    } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-storage.js";
+
+    import {
+      getAuth,
+      GoogleAuthProvider,
+      signInWithPopup,
+      signOut
+    } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+    // 🔑 Firebase 設定
+    const firebaseConfig = {
+      apiKey: "AIzaSyDv-RaKqzx1fG3ee8JgSTr-YxTXaORjevk",
+      authDomain: "ilikewpmbookmarks.firebaseapp.com",
+      projectId: "ilikewpmbookmarks",
+      storageBucket: "ilikewpmbookmarks.appspot.com",
+      messagingSenderId: "847027981573",
+      appId: "1:847027981573:web:64096a861c236d4ed4bb6c"
+    };
+
+    // ✅ 初始化 Firebase
+    const app = initializeApp(firebaseConfig);
+    const storage = getStorage(app);
+    const auth = getAuth(app);
+    const saveBtn = document.getElementById('save-btn');
+    const loadBtn = document.getElementById('load-btn');
+
+
+    const provider = new GoogleAuthProvider();
+    // 登入
+    document.getElementById("loginBtn").onclick = async () => {
+      try {
+        const result = await signInWithPopup(auth, provider);
+        const uid = result.user.uid;
+        document.getElementById("status").innerText = "登入成功";
+        console.log("我的 UID:", uid);
+        showSnackbar("請複製這個 UID 到你的 Storage 規則裡:\n" + uid);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+
+    // 登出
+    document.getElementById("logoutBtn").onclick = async () => {
+      try {
+        await signOut(auth);
+        document.getElementById("status").innerText = "已登出";
+      } catch (err) {
+        console.error(err);
+      }
+    };
+
+    // ✅ 儲存到 Storage (english/tags.json)
+    saveBtn.addEventListener('click', async () => {
+      if (!auth.currentUser) {
+        showSnackbar("請先登入！");
+        return;
+      }
+
+      try {
+        renderTags(); // ⬅️ 同步最新 UI 狀態
+
+        // 🔹 若 tag 沒有 id，就建立新的 generateTagId()
+        tagList.forEach(t => {
+          if (!t.id) t.id = generateTagId();
+        });
+
+        // 🔹 建立唯一檔名
+        const fileName = `tags-${generateTagId()}.json`;
+        const fileRef = ref(storage, `english/${fileName}`);
+
+        const jsonStr = JSON.stringify(tagList, null, 2);
+        await uploadBytes(fileRef, new Blob([jsonStr], { type: "application/json" }));
+
+        showSnackbar(`✅ 已存入 Firebase！（檔名: ${fileName}）`);
+
+        // 🔹 保留最新 5 個檔案，刪除舊的
+        const folderRef = ref(storage, "english/");
+        const listResult = await listAll(folderRef);
+
+        // 篩選出 tags- 檔案並依照名稱排序（generateTagId 越新字串越大）
+        const tagFiles = listResult.items
+          .filter(item => item.name.startsWith("tags-") && item.name.endsWith(".json"))
+          .sort((a, b) => b.name.localeCompare(a.name, undefined, { numeric: true }));
+
+        if (tagFiles.length > 5) {
+          // 剩下超過 5 份，刪除最舊的
+          const oldFiles = tagFiles.slice(5);
+          for (const oldFile of oldFiles) {
+            await deleteObject(oldFile);
+            console.log("🗑️ 已刪除舊檔:", oldFile.name);
+          }
+        }
+
+      } catch (err) {
+        console.error("❌ 儲存失敗:", err);
+        showSnackbar("❌ 儲存失敗！");
+      }
+    });
+    function showSnackbar(message) {
+      const sb = document.getElementById("snackbar");
+      sb.innerHTML = message;
+      sb.className = "show";
+      setTimeout(() => { sb.className = sb.className.replace("show", ""); }, 3000);
+    }
+
+    // ✅ 從 Storage 載入
+    loadBtn.addEventListener('click', async () => {
+      if (!auth.currentUser) {
+        showSnackbar("請先登入！");
+        return;
+      }
+
+      try {
+        const folderRef = ref(storage, "english/");
+        const listResult = await listAll(folderRef);
+
+        const tagFiles = listResult.items
+          .filter(item => item.name.startsWith("tags-") && item.name.endsWith(".json"))
+          .sort((a, b) => b.name.localeCompare(a.name, undefined, { numeric: true }));
+
+        if (tagFiles.length === 0) {
+          showSnackbar("⚠️ 沒有可載入的檔案！");
+          return;
+        }
+
+        const latestFileRef = tagFiles[0];
+        const url = await getDownloadURL(latestFileRef);
+        const res = await fetch(url);
+        const loaded = await res.json();
+
+        if (Array.isArray(loaded)) {
+          tagList.splice(0, tagList.length, ...loaded);
+          renderTags();
+          showSnackbar(`✅ 已載入最新檔案：${latestFileRef.name}`);
+        } else {
+          showSnackbar("❌ JSON 格式錯誤！");
+        }
+      } catch (err) {
+        console.error("❌ 載入失敗:", err);
+        showSnackbar("❌ 載入失敗！");
+      }
+    });
+
+    const textarea = document.getElementById("tag-input");
+
+    // 計算一行的像素高度 (取決於 line-height)
+    const lineHeight = parseInt(getComputedStyle(textarea).lineHeight, 10);
+    const minHeight = lineHeight + 4; // 再加少少補白 margin/padding
+
+    function autoResize(el) {
+      el.style.height = "auto"; // 重置再計
+
+      if (el.scrollHeight > 600) {
+        el.style.height = "600px";     // 超過就固定600
+        el.style.overflowY = "auto";   // 開Scrollbar
+      } else {
+        el.style.height = el.scrollHeight + "px"; // 高度fit內容
+        el.style.overflowY = "hidden"; // 少於600唔要scrollbar
+      }
+    }
+
+    textarea.addEventListener("input", () => autoResize(textarea));
+    autoResize(textarea);    // Function to hide the tag list
+    function focustaglist() {
+      const taglist = document.getElementById('tag-list'); // Reference the list
+
+      // Hide the list
+      taglist.style.display = 'none';
+    }    const mobilebtn = document.getElementById('mobilebtn');
+    let mouseX = 0, mouseY = 0;
+    let idleTimer, hideTimer;
+    const idleDelay = 200;  // 停留 0.5 秒再顯示
+    const hideDelay = 1000; // 移動後 2 秒消失
+    let isButtonVisible = false;
+
+    // 滑鼠移動時
+    document.addEventListener('mousemove', (e) => {
+      if (e.target === mobilebtn) return; // 避免移到按鈕上就隱藏
+
+      mouseX = e.clientX;
+      mouseY = e.clientY;
+
+      clearTimeout(idleTimer);
+      clearTimeout(hideTimer);
+
+      // 如果按鈕已顯示，重新啟動「消失倒數」
+      if (isButtonVisible) {
+        hideTimer = setTimeout(() => {
+          mobilebtn.style.display = 'none';
+          isButtonVisible = false;
+        }, hideDelay);
+      }
+
+      // 決定是否要出現
+      idleTimer = setTimeout(() => {
+        showButtonAt(mouseX, mouseY);
+      }, idleDelay);
+    });
+
+    // 顯示按鈕（靠近滑鼠，不要蓋住）
+    function showButtonAt(x, y) {
+      mobilebtn.style.display = 'block';
+      paginationDiv.style.display = 'block';
+      const offset = 15; // 偏移量
+      const btnWidth = mobilebtn.offsetWidth;
+      const btnHeight = mobilebtn.offsetHeight;
+
+      mobilebtn.style.left = (x + offset - btnWidth / 2) + 'px';
+      mobilebtn.style.top = (y + offset - btnHeight / 2) + 'px';
+
+      isButtonVisible = true;
+
+      // 出現後就啟動消失計時器
+      clearTimeout(hideTimer);
+      hideTimer = setTimeout(() => {
+        mobilebtn.style.display = 'block';
+        paginationDiv.style.opacity = 1;;
+
+        isButtonVisible = false;
+      }, hideDelay);
+    }
+
+    // 當滑鼠移到按鈕本身 → 取消隱藏
+    mobilebtn.addEventListener('mouseenter', () => {
+      clearTimeout(hideTimer); // 不會消失
+    });
+
+    // 當滑鼠離開按鈕本身 → 再次啟動隱藏倒數
+    mobilebtn.addEventListener('mouseleave', () => {
+      hideTimer = setTimeout(() => {
+        mobilebtn.style.display = 'none';
+        isButtonVisible = false;
+      }, hideDelay);
+    });
+
+    // 初始隱藏
+    mobilebtn.style.display = 'none';
+
+    // 滾動控制
+    function handleScroll() {
+      mobilebtn.style.display = "none";
+      list.style.display = "none";
+      paginationDiv.style.opacity = 0.1;;
+    }
+
+  mobilebtn.addEventListener('click', function () {
+          list.style.display = "block";
+
+  tagInput.focus();
+});
+
+tagInput.addEventListener('focus', function () {
+  list.style.opacity = '1';
+});
+
+    window.addEventListener('scroll', handleScroll);
+
+
+    const tagList = [];
+
+    const list = document.getElementById('list');
+    let isDragging = false;
+    let offsetX = 0;
+    let offsetY = 0;
+
+    // Mouse down event to start dragging
+    list.addEventListener('mousedown', (e) => {
+      isDragging = true;
+      offsetX = e.clientX - list.offsetLeft;
+      offsetY = e.clientY - list.offsetTop;
+      list.style.cursor = 'grabbing';
+    });
+
+    // Mouse move event to drag the element
+    document.addEventListener('mousemove', (e) => {
+      if (isDragging) {
+        // list.style.left = `${e.clientX - offsetX}px`;
+        list.style.top = `${e.clientY - offsetY}px`;
+      }
+    });
+
+    // Mouse up event to stop dragging
+    document.addEventListener('mouseup', () => {
+      isDragging = false;
+      list.style.cursor = 'grab';
+    });
+
+
+let zhMode = "hans"; // 你頁面目前 lang="zh-Hans"，預設當簡體顯示
+// 也可以改用 localStorage 記住使用者選擇：
+try {
+  const saved = localStorage.getItem("zhMode");
+  if (saved === "hans" || saved === "hant") zhMode = saved;
+} catch {}
+
+let openccT2S = null;
+let openccS2T = null;
+
+function initOpenCC() {
+  if (typeof OpenCC === "undefined") {
+    console.warn("OpenCC not loaded");
+    return false;
+  }
+  // 用詞在地化你可自行調整：
+  // s2t/t2s: 偏字形；twp/cn: 偏台灣<->大陸用語
+  openccT2S = OpenCC.Converter({ from: "twp", to: "cn" });
+  openccS2T = OpenCC.Converter({ from: "cn", to: "twp" });
+  return true;
+}
+
+function isHtmlTagString(s) {
+  // 只要含有 <...> 就視為 HTML（避免轉換壞掉）
+  return typeof s === "string" && /<[^>]+>/.test(s);
+}
+
+function toDisplayZh(text) {
+  if (typeof text !== "string") return text;
+
+  // 有 HTML 的一律不轉（包含你塞的 <img> / <iframe> / wordmarks 等）
+  if (isHtmlTagString(text)) return text;
+
+  // 沒初始化就原樣
+  if (!openccT2S || !openccS2T) return text;
+
+  // zhMode="hans" => 顯示簡體；"hant" => 顯示繁體
+  return (zhMode === "hant") ? openccS2T(text) : openccT2S(text);
+}
+
+function setZhMode(next) {
+  zhMode = next === "hant" ? "hant" : "hans";
+  try { localStorage.setItem("zhMode", zhMode); } catch {}
+  const btn = document.getElementById("zhToggleBtn");
+  if (btn) btn.textContent = zhMode === "hans" ? "简→繁" : "繁→简";
+  renderTags(); // 你本來就會重繪整個 taglist
+}
+
+
+
+    // Split-mode pagination state
+let imgCurrentPage = 1;
+let textCurrentPage = 1;
+
+let imgTagsPerPage = 10;
+let textTagsPerPage = 30;
+
+    const splitWrap = document.getElementById("splitWrap");
+const tagListUl = document.getElementById("tag-list");
+const tagListImgUl = document.getElementById("tag-list-img");
+const tagListTextUl = document.getElementById("tag-list-text");
+const gridModeSelect = document.getElementById("gridModeSelect");
+
+const gridClasses = ["grid-list","grid-2","grid-3","grid-4","grid-masonry"];
+
+let viewMode = gridModeSelect?.value || "grid-list";
+
+gridModeSelect.addEventListener("change", () => {
+  viewMode = gridModeSelect.value;
+  renderTags(); // re-render with new mode
+});
+
+
+    list.style.animation = "fadeIn 1s ease";  // Apply the fadeIn animation with a duration of 2 seconds and ease timing function    let currentColorIndex = 0;
+    const liststyle = ['tag-list', 'tag-list2', 'tag-list3'];
+
+    ToggleClassesbtn.addEventListener('click', () => {
+      currentColorIndex++;
+      if (currentColorIndex >= liststyle.length) {
+        currentColorIndex = 0;
+      }
+      tagListDiv.classList.remove(liststyle[(currentColorIndex + liststyle.length - 1) % liststyle.length]);
+      tagListDiv.classList.add(liststyle[currentColorIndex]);
+
+    });
+    // Undo stack for reverting actions
+    const undoStack = [];
+
+    // Keep track of tag names (case-insensitive uniqueness)
+    let tagNames = new Set(tagList.map((t) => t.name.toLowerCase()));
+
+
+    function generateTagId() {
+      const now = new Date();
+
+      const year = now.getFullYear();
+      const month = String(now.getMonth() + 1).padStart(2, '0');
+      const day = String(now.getDate()).padStart(2, '0');
+      const hours = String(now.getHours()).padStart(2, '0');
+      const minutes = String(now.getMinutes()).padStart(2, '0');
+      const seconds = String(now.getSeconds()).padStart(2, '0');
+      const millis = String(now.getMilliseconds()).padStart(3, '0');
+
+      return `${year}${month}${day}${hours}${minutes}${seconds}${millis}`;
+    }
+
+
+    function addTag(tag) {
+      const lowerCaseTag = tag.toLowerCase();
+
+      if (lowerCaseTag && !tagNames.has(lowerCaseTag)) {
+const now = new Date().toISOString();
+const newTag = {
+  id: generateTagId(),
+  name: tag,
+  createdAt: now,
+  updatedAt: now
+};
+        // If tag length > 500, just add the main tag
+        if (tag.length > 500) {
+          undoStack.push({ type: 'add', tag: newTag });
+          tagList.unshift(newTag);
+          tagNames.add(lowerCaseTag);
+        } else {
+          // Add the main tag
+          undoStack.push({ type: 'add', tag: newTag });
+          tagList.unshift(newTag);
+          tagNames.add(lowerCaseTag);
+
+        }
+
+        // Re-render tag list
+        renderTags();
+
+        // Clear input
+        tagInput.value = '';
+
+
+      }
+    }
+
+    function sortLengthTags() {
+      const sortedTags = [...tagList].sort((a, b) => a.name.length - b.name.length);
+      undoStack.push({ type: 'sort', tags: [...tagList] });
+      tagList.splice(0, tagList.length, ...sortedTags);
+      renderTags();
+    }    const MAX_NAME_TOKENS_FOR_SORT = 300;
+
+    // Tokenize: English words and individual Chinese characters
+    function tokenizeMixed(text, maxTokens = Infinity) {
+      const toks = (text || '').toLowerCase().match(/[\u4e00-\u9fa5]|[a-z0-9]+/g) || [];
+      return toks.length > maxTokens ? toks.slice(0, maxTokens) : toks;
+    }
+
+    // Jaccard similarity between two token sets
+    function jaccardSimilarityFromTokens(aTokens, bTokens) {
+      if (!aTokens.length || !bTokens.length) return 0;
+      const aSet = new Set(aTokens);
+      const bSet = new Set(bTokens);
+      let inter = 0;
+      for (const t of aSet) if (bSet.has(t)) inter++;
+      const union = aSet.size + bSet.size - inter;
+      return union ? inter / union : 0;
+    }
+
+    // Similarity between a query string and a pre-tokenized tag name
+    function wordSimilarity(query, nameTokens) {
+      // limit query tokens too (no need to process huge inputs)
+      const qTokens = tokenizeMixed(query, 50);
+      return jaccardSimilarityFromTokens(qTokens, nameTokens);
+    }    function undo() {
+      const lastAction = undoStack.pop();
+
+      if (lastAction) {
+        switch (lastAction.type) {
+          case 'add':
+            tagList.splice(tagList.findIndex(t => t.name === lastAction.tag.name), 1);
+            renderTags();
+            break;
+          case 'remove':
+            tagList.push(lastAction.tag);
+            renderTags();
+            break;
+          default:
+            break;
+        }
+      }
+    }
+
+
+  
+
+    function countWordsInTags(filteredlist1) {
+      const wordSet = new Set(); // Track unique words
+      let totalWordCount = 0; // Total number of words
+
+      const counts = filteredlist1.reduce((count, tag) => {
+        // Split the name into words and sanitize
+        const words = tag.name.includes('http')
+          ? []
+          : tag.name.split(/\s+/).map(word => {
+            // Remove punctuation, convert to lowercase, and filter out "—"
+            const sanitizedWord = word.replace(/[^\w-]/g, '').toLowerCase();
+            // Exclude "—" and words that are solely numbers
+            return sanitizedWord === '—' || /^\d+$/.test(sanitizedWord) ? '' : sanitizedWord;
+          }).filter(Boolean); // Remove empty strings
+
+        totalWordCount += words.length; // Increment total word count
+
+        // Add each sanitized word to the Set for uniqueness
+        words.forEach(word => {
+          if (word) { // Check if the word is not empty
+            wordSet.add(word);
+          }
+        });
+
+        // Increment counts based on the number of words in the tag
+        count.wordCount += words.length;
+        if (words.length === 1) count.oneWordTagCount++;
+        else if (words.length === 2) count.twoWordTagCount++;
+        else if (words.length >= 3) count.threeOrMoreWordTagCount++;
+
+        return count;
+      }, {
+        wordCount: 0,
+        oneWordTagCount: 0,
+        twoWordTagCount: 0,
+        threeOrMoreWordTagCount: 0
+      });
+
+      return {
+        ...counts,
+        totalWordCount,        // Total number of words
+        uniqueWordCount: wordSet.size // Number of unique words
+      };
+    }    
+    function isRawHtmlMediaTag(s) {
+  if (typeof s !== "string") return false;
+  const t = s.trim().toLowerCase();
+  return (
+    t.startsWith("<iframe") ||
+    t.startsWith("<img") ||
+    t.startsWith("<video") ||
+    t.startsWith("<audio") ||
+    t.startsWith("<svg")   // 可選
+  );
+}
+    let activeHighlightQuery = "";
+
+    function renderTags() {
+      tagListDiv.innerHTML = '';
+
+const searchInputValue = searchInput.value.trim();
+
+/** 1) Tokenize: 支援
+ * - operators: | , ( )
+ * - quoted phrase: "..." or '...' (支援 \ 逃逸下一字元)
+ * - normal token: until whitespace or operator
+ * - unary NOT: '-' 會在 parser 當成前綴運算子（可用在 term 或 (...)）
+ */
+
+/** 2) Parser (recursive descent)
+ * Grammar (informal):
+ *   expr     := orExpr
+ *   orExpr   := andExpr ( '|' andExpr )*
+ *   andExpr  := unary ( ',' unary )*
+ *   unary    := '-' unary | primary
+ *   primary  := TERM | '(' expr ')'
+ *
+ * TERM: token.type === 'term', value non-empty
+ */
+function parse(tokens) {
+  let pos = 0;
+
+  const peek = () => tokens[pos];
+  const consume = () => tokens[pos++];
+
+  const matchOp = (op) => {
+    const t = peek();
+    if (t && t.type === 'op' && t.value === op) {
+      pos++;
+      return true;
+    }
+    return false;
+  };
+
+  const parsePrimary = () => {
+    const t = peek();
+    if (!t) return null;
+
+    if (t.type === 'op' && t.value === '(') {
+      consume(); // '('
+      const node = parseOr();
+      if (!matchOp(')')) {
+        throw new Error('Missing closing parenthesis )');
+      }
+      return node;
+    }
+
+    if (t.type === 'term') {
+      consume();
+      const v = String(t.value).trim();
+      if (!v) return null;
+      return { type: 'TERM', value: v };
+    }
+
+    return null;
+  };
+
+  const parseUnary = () => {
+    // unary NOT: allow multiple ----term
+    const t = peek();
+    if (t && t.type === 'term') {
+      // Special case: token might start with '-' like "-apple" or "--apple"
+      // We'll peel leading '-' characters and convert them to NOT nodes.
+      let raw = String(t.value);
+      if (raw.startsWith('-') && raw.length > 1) {
+        consume();
+        let k = 0;
+        while (k < raw.length && raw[k] === '-') k++;
+        const term = raw.slice(k).trim();
+        let node = { type: 'TERM', value: term };
+        // apply NOT k times (odd => NOT, even => cancel out but we keep structure)
+        for (let i = 0; i < k; i++) node = { type: 'NOT', child: node };
+        return node;
+      }
+    }
+
+    // Real unary operator if you want "-" separated (like "- (a|b)") as two tokens.
+    // Here we support it when '-' is a standalone term token.
+    if (t && t.type === 'term' && t.value === '-') {
+      consume();
+      const child = parseUnary();
+      if (!child) return null;
+      return { type: 'NOT', child };
+    }
+
+    // Also support "-( ... )" when '-' is attached to nothing? tokenization will produce term "-(..."
+    // For clean behavior, recommend user write "-(a|b)" (handled by the peel case below only if it's one token),
+    // OR write "- (a|b)" but that would make '-' as a term token. We'll support "-" standalone as above.
+
+    // If next token is '(' and previous token was a standalone '-' we already handled.
+    return parsePrimary();
+  };
+
+  const parseAnd = () => {
+    let left = parseUnary();
+    if (!left) return null;
+
+    while (matchOp(',')) {
+      const right = parseUnary();
+      if (!right) break;
+      left = { type: 'AND', left, right };
+    }
+    return left;
+  };
+
+  const parseOr = () => {
+    let left = parseAnd();
+    if (!left) return null;
+
+    while (matchOp('|')) {
+      const right = parseAnd();
+      if (!right) break;
+      left = { type: 'OR', left, right };
+    }
+    return left;
+  };
+
+  const ast = parseOr();
+
+  // If there are leftover tokens, it's likely a syntax issue (e.g., unmatched ')')
+  if (pos < tokens.length) {
+    const rest = tokens.slice(pos).map(t => t.value).join(' ');
+    throw new Error('Unexpected tokens near: ' + rest);
+  }
+
+  return ast;
+}
+
+/** 3) Matching: escape term -> RegExp i */
+function buildRegex(term) {
+  const escaped = term.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&');
+  return new RegExp(escaped, 'i');
+}
+
+function evalAst(ast, tagText) {
+  if (!ast) return true;
+
+  switch (ast.type) {
+    case 'TERM':
+      return buildRegex(ast.value).test(tagText);
+    case 'NOT':
+      return !evalAst(ast.child, tagText);
+    case 'AND':
+      return evalAst(ast.left, tagText) && evalAst(ast.right, tagText);
+    case 'OR':
+      return evalAst(ast.left, tagText) || evalAst(ast.right, tagText);
+    default:
+      return true;
+  }
+}
+
+// 4) Use it
+let ast = null;
+try {
+  if (searchInputValue) {
+    const tokens = tokenize(searchInputValue);
+    ast = parse(tokens);
+  }
+} catch (e) {
+  // 語法錯誤時你要怎麼處理：這裡選擇「不過濾」或「回空」都可以
+  // 我先用「不過濾」並可 console 警告
+  console.warn(e);
+  ast = null;
+}
+
+const filteredList = tagList.filter(tag => {
+  if (!searchInputValue) return true;
+  const tagText = (tag.name + ' ' + tag.id).toLowerCase();
+  return evalAst(ast, tagText);
+});
+
+      const tagCount = filteredList.length;
+
+      const { wordCount, oneWordTagCount, twoWordTagCount, threeOrMoreWordTagCount, uniqueWordCount } =
+        countWordsInTags(filteredList);
+
+      const tagscount = document.getElementById('tagscount');
+
+      tagscount.innerHTML = `
+  <div class='totalCountDiv'>Words Count:</div> <div class='totalCountDiv'>${wordCount}</div>
+  <div class='totalCountDiv'>One Count:</div><div class='totalCountDiv'> ${oneWordTagCount}</div>
+  <div class='totalCountDiv'>Two Count:</div><div class='totalCountDiv'> ${twoWordTagCount}</div>
+  <div class='totalCountDiv'>Three Count:</div><div class='totalCountDiv'> ${threeOrMoreWordTagCount}</div>
+  <div class='totalCountDiv'>unique Count:</div><div class='totalCountDiv'> ${uniqueWordCount}</div> 
+  `;
+
+      const totalnumbers = document.getElementById('totalnumbers');
+      totalnumbers.innerHTML = tagCount;
+
+      // Step 1: Create a Set to track unique single-word tags
+      const uniqueWords = new Set();
+
+      // Step 2: Populate the Set with unique single-word names
+      tagList.forEach(tag => {
+        const tagName = tag.name.trim(); // Trim whitespace around the tag name
+
+        // Only consider tags that are a single word (no spaces) and do not contain "http"
+        if (tagName && !tagName.includes(' ') && !tagName.includes('http')) {
+          const sanitizedWord = tagName.replace(/[,.?:;)\-<">(&/!}{[\]]/g, '').toLowerCase(); // Sanitize
+          if (sanitizedWord) uniqueWords.add(sanitizedWord); // Add to Set if not empty
+        }
+      });
+
+      // Step 3: Convert Set to Array
+      const uniqueWordsArray = Array.from(uniqueWords);
+
+      const isEnglishWord = (word) => /^[a-zA-Z]+$/.test(word);
+      const filteredUniqueWords = uniqueWordsArray.filter(isEnglishWord);
+
+      // Step 4: Count words by their starting letter
+      const countByLetter = filteredUniqueWords.reduce((acc, word) => {
+        const firstLetter = word[0]?.toUpperCase(); // Get the first letter
+        if (firstLetter) {
+          acc[firstLetter] = (acc[firstLetter] || 0) + 1; // Increment the count
+        }
+        return acc;
+      }, {});
+
+      // Display total count
+      const totalCountDiv = document.createElement('div');
+      totalCountDiv.innerHTML = `<h6>Total Tags:</h6> <h4>${tagCount}</h4>`;
+      totalCountDiv.classList.add('totalCountDiv');
+
+      // Create parent element
+      const parentElement2 = document.createElement('div');
+      parentElement2.id = 'parentElement2';
+
+      // Select the toggle button
+      const toggleButton = document.getElementById('toggleButton');
+
+      // Add a click event listener to toggle the 'show' class
+      toggleButton.addEventListener('click', () => {
+        parentElement2.classList.toggle('show');
+      });
+
+      tagscount.appendChild(parentElement2);
+
+      for (let letter = 'A'; letter <= 'Z'; letter = String.fromCharCode(letter.charCodeAt(0) + 1)) {
+        const count = countByLetter[letter] || 0;
+        const letterCountDiv = document.createElement('div');
+        letterCountDiv.classList.add('letterCountDiv');
+
+        // Filter tags starting with the current letter and ensure they are single-word tags
+        const tagsStartingWithLetter = filteredList.filter(tag => {
+          const tagName = tag.name.trim();
+          return tagName[0]?.toUpperCase() === letter && !tagName.includes(' ');
+        });
+
+        const tagNames = tagsStartingWithLetter.map(tag => tag.name);
+
+        const heading = document.createElement('h1');
+        heading.innerHTML = `${letter}:`;
+        heading.classList.add('letterHeading');
+
+        const countElement = document.createElement('h4');
+        countElement.innerHTML = count;
+
+        const paragraph = document.createElement('ul');
+        paragraph.classList.add('tagList');
+        paragraph.style.display = 'none';
+        paragraph.innerHTML = tagNames.map(tag => `<li>${tag}</li>`).join('');
+
+        // Toggle visibility of the tag list on heading click
+        heading.addEventListener('click', () => {
+          paragraph.style.display = paragraph.style.display === 'none' ? 'block' : 'none';
+        });
+
+        letterCountDiv.appendChild(heading);
+        letterCountDiv.appendChild(countElement);
+        letterCountDiv.appendChild(paragraph);
+        parentElement2.appendChild(letterCountDiv);
+      }
+
+      const uniqueTags = Array.from(
+        new Map(filteredList.map(tag => [tag.name.toLowerCase(), tag])).values()
+      );
+
+      const wordCounts = {};
+      uniqueTags.forEach(tag => {
+        tag.name
+          .toLowerCase()
+          .split(/\s+/) // Split tag name into individual words
+          .forEach(word => {
+            // Fix: allow Chinese characters through
+            const sanitizedWord = word.replace(/[^\w\u4e00-\u9fff-]/g, '');
+            if (sanitizedWord) {
+              wordCounts[sanitizedWord] = (wordCounts[sanitizedWord] || 0) + 1;
+            }
+          });
+      });
+
+      tagListDiv.innerHTML = ''; // Clear the tag list container
+
+      // Helper: count tokens (CN chars individually + contiguous alphanumerics)
+      function countWords(text) {
+        const matches = text.match(/[\u4e00-\u9fa5]|[a-zA-Z0-9]+/g) || [];
+        return matches.length;
+      }
+
+      // Lazy-load + Pagination for long tags
+      const longTagMap = new WeakMap();
+
+      const longTagObserver = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            const { tag, contentEl } = longTagMap.get(entry.target);
+            const text = tag.name;
+
+            // === 每塊固定 5000 字，但不切斷單字 ===
+            const chunks = [];
+            const chunkSize = 10000;
+            let i = 0;
+
+            while (i < text.length) {
+              let end = i + chunkSize;
+              if (end < text.length) {
+                // 嘗試在結尾後找最近的分隔符 (空白、標點、換行)
+                const nextBreak = text.slice(end).search(/[\s.,!?;:"'，。！？；：「」【】]/);
+                if (nextBreak >= 0 && nextBreak < 200) {
+                  // 若在預期後 200 字內找到自然分段，優先取那裡
+                  end = end + nextBreak + 1;
+                } else {
+                  // 否則，再往前找最近的分隔符，避免切字
+                  const prevBreak = text.slice(i, end).lastIndexOf(" ");
+                  if (prevBreak > 0) end = i + prevBreak + 1;
+                }
+              }
+
+              let slice = text.slice(i, end);
+              if (enableWordLookup) {
+                slice = wrapWithWordLookup(slice, true);
+              } else {
+                slice = getHighlightedHTML({ name: slice });
+              }
+              chunks.push(slice);
+              i = end;
+            }
+
+            // === 初始顯示第一段 ===
+            let currentIndex = 0;
+contentEl.innerHTML = chunks[currentIndex];
+if (activeHighlightQuery) highlightInElement(contentEl, activeHighlightQuery);
+            // === Load More 按鈕 ===
+            const loadBtn = document.createElement("button");
+            loadBtn.textContent = "Load More";
+            Object.assign(loadBtn.style, {
+              display: "block",
+              margin: "10px auto",
+              padding: "6px 12px",
+              borderRadius: "6px",
+              border: "1px solid #ccc",
+              cursor: "pointer"
+            });
+            contentEl.appendChild(loadBtn);
+
+loadBtn.addEventListener("click", () => {
+  currentIndex++;
+  if (currentIndex < chunks.length) {
+    const nextDiv = document.createElement("div");
+    nextDiv.innerHTML = chunks[currentIndex];
+    contentEl.insertBefore(nextDiv, loadBtn);
+
+    // ✅ 新增：對新插入內容套用目前的 Related 高亮
+    if (activeHighlightQuery) {
+      highlightInElement(nextDiv, activeHighlightQuery);
+    }
+  }
+  if (currentIndex === chunks.length - 1) {
+    loadBtn.remove();
+  }
+});
+
+            // === 還原容器樣式 ===
+            entry.target.style.height = "auto";
+            entry.target.style.overflowY = "visible";
+
+            longTagObserver.unobserve(entry.target);
+          }
+        });
+      }, {
+        root: null,
+        rootMargin: "400px 0px",
+        threshold: 0
+      });
+
+
+      function getHighlightedHTML(tag, index) {
+        const words = tag.name.split(/(\s+)/);
+
+        const tagWords = words
+          .map((word) => {
+            // 空白直接返回
+            if (/^\s+$/.test(word)) {
+              return word;
+            }
+
+            // 排除 <img> 相关标签
+            if (tag.name.toLowerCase().includes("img")) {
+              return word;
+            }
+
+            // 如果包含中文，直接跳过高亮
+            if (/[\u4e00-\u9fff]/.test(word)) {
+              return word;
+            }
+
+            const sanitizedWord = word.toLowerCase().replace(/[^\w- ]/g, "");
+            if (!sanitizedWord) return word;
+
+            const freq2 = wordCounts[sanitizedWord] || 0;
+
+            if (freq2 <= 1) {
+              return `<span style="border-left: rgba(255,20,147,0.2); border-radius: 20px; font-size: 20px;">${word}</span>`;
+            } else if (freq2 <= 3) {
+              return `<span style="border-left: rgba(255,69,0,0.2); border-radius: 20px; font-size: 20px;">${word}</span>`;
+            } else if (freq2 <= 5) {
+              return `<span style="border-left: rgba(255,255,0,0.3); border-radius: 20px; font-size: 20px;">${word}</span>`;
+            } else if (freq2 <= 7) {
+              return `<span style="border-left: rgba(50,205,50,0.25); border-radius: 20px; font-size: 20px;">${word}</span>`;
+            } else if (freq2 <= 11) {
+              return `<span style="border-left: rgba(0,191,255,0.25); border-radius: 20px; font-size: 20px;">${word}</span>`;
+            } else if (freq2 <= 17) {
+              return `<span style="border-left: rgba(123,104,238,0.25); border-radius: 20px; font-size: 20px;">${word}</span>`;
+            }
+
+            return word;
+          })
+          .join("");
+
+        return tagWords;
+      }
+
+function renderTagsInto(ulEl, tags, page, perPage) {
+  ulEl.innerHTML = "";
+
+  const startIndex = (page - 1) * perPage;
+  const endIndex = Math.min(startIndex + perPage, tags.length);
+
+  tags.slice(startIndex, endIndex).forEach((tag, index) => {
+    const tagDiv = document.createElement("li");
+    tagDiv.classList.add("tag");
+    tagDiv.setAttribute("data-name", tag.name);
+    tagDiv.setAttribute("data-tag-id", index + startIndex);
+
+    const contentEl = document.createElement("span");
+
+const raw = String(tag.name || "");
+
+if (isRawHtmlMediaTag(raw)) {
+  contentEl.innerHTML = raw; // ✅ video/iframe/img 原樣
+  
+} else {
+  const displayName = toDisplayZh(raw);
+  contentEl.innerHTML = enableWordLookup
+    ? wrapWithWordLookup(displayName)
+    : getHighlightedHTML({ name: displayName });
+}
+
+    tagDiv.appendChild(contentEl);
+    ulEl.appendChild(tagDiv);
+
+    attachImageHoverTooltip(tagDiv);
+  });
+}
+      // Define the number of tags per page
+      const tagsPerPageDefault = 30; // 預設每頁顯示 30 筆
+      let tagsPerPage = tagsPerPageDefault;
+      let currentPage = 1;
+
+      // === 主渲染函式 ===
+function renderTagsPage(tags, page, targetUl = tagListDiv, perPageOverride = null) {
+  const ul = targetUl || tagListDiv;
+  const perPage = perPageOverride ?? tagsPerPage;
+
+  ul.innerHTML = "";
+
+  const startIndex = (page - 1) * perPage;
+  const endIndex = Math.min(startIndex + perPage, tags.length);
+
+  tags.slice(startIndex, endIndex).forEach((tag, index) => {
+    const tagDiv = document.createElement("li");
+    tagDiv.classList.add("tag");
+    tagDiv.setAttribute("data-name", tag.name);
+    tagDiv.setAttribute("data-id", tag.id);
+    
+tagDiv.setAttribute("data-original-text", toDisplayZh(tag.name));
+    const contentEl = document.createElement("span");
+    contentEl.className = "tag-content";
+
+    const tokenCount = countWords(tag.name || "");
+    const isLong = tokenCount > 5000;
+
+    if (isLong) {
+      contentEl.innerHTML = `<em style="color:#666">Loading large content (${tokenCount} tokens)…</em>`;
+      tagDiv.style.height = "400px";
+      tagDiv.style.overflowY = "hidden";
+      longTagMap.set(tagDiv, { tag, contentEl, loaded: false });
+      longTagObserver.observe(tagDiv);
+    } else {
+      if (isRawHtmlMediaTag(tag.name)) {
+        contentEl.innerHTML = tag.name;
+      } else {
+const displayName = toDisplayZh(tag.name);
+
+contentEl.innerHTML = enableWordLookup
+  ? wrapWithWordLookup(displayName)
+  : getHighlightedHTML({ name: displayName });
+      }
+      tagDiv.style.height = "auto";
+    }
+// apply hide flag (correct place)
+if (hideModeOn && isTagHidden(tag)) {
+  tagDiv.style.display = "none";
+  tagDiv.classList.add("is-hidden-tag");
+} else {
+  tagDiv.style.display = "";
+  tagDiv.classList.remove("is-hidden-tag");
+}
+    tagDiv.appendChild(contentEl);
+
+// ✅ 加這段：Partial / Related / Full
+if (isLong) {
+  const toggleWrap = document.createElement("div");
+  toggleWrap.className = "hl-toggles";
+  toggleWrap.innerHTML = `
+    <span class="show-full" data-action="copy-related">Copy related content</span>
+    <span class="show-full" data-action="full">(Show full)</span>
+  `;
+  tagDiv.appendChild(toggleWrap);
+}
+    // ✅ 你的 hover tooltip 是找 img，所以對 tagDiv 做就可以
+    attachImageHoverTooltip(tagDiv);
+
+    // ===== 控制按鈕（你原本那段）=====
+          let div1 = document.createElement('li');
+
+          let div2 = document.createElement('li');
+          div2.className = 'tagnamebtn';
+
+          let button1 = document.createElement('button');
+          button1.type = 'button';
+          button1.className = 'copy-tag-btn btn btn-success';
+          button1.innerHTML = 'C';
+          div2.appendChild(button1);
+
+          let button2 = document.createElement('button');
+          button2.type = 'button';
+          button2.className = 'edit-tag-btn btn btn-warning';
+          button2.innerHTML = 'E';
+          div2.appendChild(button2);
+
+          let button3 = document.createElement('button');
+          button3.type = 'button';
+          button3.className = 'remove-tag-btn btn btn-danger';
+          button3.innerHTML = 'X';
+          div2.appendChild(button3);
+
+          let button4_1 = document.createElement('button');
+          button4_1.type = 'button';
+          button4_1.className = 'line-through-btn btn btn-primary';
+          button4_1.innerHTML = 'N';
+          div2.appendChild(button4_1);
+
+          let button8 = document.createElement('button');
+          button8.type = 'button';
+          button8.className = 'button8 btn btn-dark';
+          button8.innerHTML = 'F';
+          div2.appendChild(button8);
+
+          let fsButton = document.createElement('button');
+          fsButton.type = 'button';
+          fsButton.className = 'fullscreen-btn btn btn-info';
+          fsButton.innerHTML = 'FS';
+          div2.appendChild(fsButton);
+
+          let hideBtn = document.createElement('button');
+hideBtn.type = 'button';
+hideBtn.className = 'hide-tag-btn btn btn-secondary';
+hideBtn.innerHTML = 'H';
+div2.appendChild(hideBtn);
+
+
+          let div3 = document.createElement('div');
+          div3.className = 'click-container unfold-zoom';
+          div2.appendChild(div3);
+
+          // 添加 div1 和 div2 到 tagDiv
+          tagDiv.appendChild(div1);
+          tagDiv.appendChild(div2);
+
+          // 隐藏 div2
+          div2.style.display = 'none';
+          let timeout;
+          let keepTimeout;
+hideBtn.addEventListener("click", () => {
+  const next = !isTagHidden(tag);
+  setTagHidden(tag, next);
+
+  // 只更新當前 li
+  if (hideModeOn && next) tagDiv.style.display = "none";
+  else tagDiv.style.display = "";
+
+  // 亦可以順便關閉 menu
+  div2.style.display = "none";
+});
+          // 点击 tagDiv 时显示/隐藏 div2
+          tagDiv.addEventListener('dblclick', (e) => {
+            // Position div2 relative to mouse pointer
+            const offsetX = 20; // pixels to the right of cursor
+            const offsetY = 20; // pixels below cursor
+
+            div2.style.position = 'fixed';
+            div2.style.left = `${e.clientX + offsetX}px`;
+            div2.style.top = `${e.clientY + offsetY}px`;
+            div2.style.transform = 'perspective(1000px) rotateY(50deg) scale(1.5)'; // keep your 3D effect
+            div2.style.zIndex = '999';
+            div2.style.display = 'block';
+            document.body.appendChild(div2);
+
+            clearTimeout(timeout);
+
+            // GSAP animation: Show div2 with a 3D effect
+            gsap.fromTo(
+              div2,
+              { opacity: 0, scale: 0.5, rotateY: -50 },
+              {
+                opacity: 1,
+                scale: 1,
+                rotateY: 0,
+                duration: 0.8,
+                ease: 'power2.out',
+              }
+            );
+
+            // Set a timeout to hide div2 after 2 seconds
+            timeout = setTimeout(() => {
+              if (!keepTimeout) {
+                gsap.to(div2, {
+                  opacity: 0,
+                  scale: 0.8,
+                  rotateY: 50,
+                  duration: 0.8,
+                  ease: 'power2.in',
+                  onComplete: () => {
+                    div2.style.display = 'none';
+                  },
+                });
+              }
+            }, 2000);
+          });
+
+          // Keep div2 visible when hovered
+          div2.addEventListener('mouseenter', () => {
+            clearTimeout(timeout); // Clear timeout
+            keepTimeout = true; // Prevent hiding
+          });
+
+          // Start hide timeout again when mouse leaves div2
+          div2.addEventListener('mouseleave', () => {
+            keepTimeout = false; // Allow hiding
+            timeout = setTimeout(() => {
+              gsap.to(div2, {
+                opacity: 0,
+                scale: 0.8,
+                rotateY: 50,
+                duration: 0.8,
+                ease: 'power2.in',
+                onComplete: () => {
+                  div2.style.display = 'none'; // Hide after animation
+                },
+              });
+            }, 3000); // 3-second delay before hiding
+          });
+
+         // tagListDiv.appendChild(tagDiv);         
+          
+           const nbtn = tagDiv.querySelector('.line-through-btn');
+          let isLineThrough = false;
+
+          nbtn.addEventListener('click', () => {
+            const tagdivstyle = tagDiv.style;
+            isLineThrough = !isLineThrough; // Toggle the line-through style
+            tagdivstyle.textDecoration = isLineThrough ? 'line-through' : 'none';
+
+            tagdivstyle.textDecorationThickness = '4px'; // Set the thickness of the line-through
+          });
+
+          // 複製標籤名稱到剪貼板
+          const copyTagBtn = tagDiv.querySelector('.copy-tag-btn');
+          copyTagBtn.addEventListener('click', () => {
+            navigator.clipboard.writeText(tag.name);
+          });
+
+          // 編輯標籤名稱
+          const editTagBtn = tagDiv.querySelector('.edit-tag-btn');
+
+          editTagBtn.addEventListener('click', () => {
+            // Create a new div for editing
+            const editDiv = document.createElement('div');
+            editDiv.className = 'edit-tag-div';
+
+            // Close button
+            const closeBtn = document.createElement('button');
+            closeBtn.innerHTML = '✖';
+            closeBtn.style.position = 'absolute';
+            closeBtn.style.top = '10px';
+            closeBtn.style.right = '10px';
+            closeBtn.style.background = 'transparent';
+            closeBtn.style.border = 'none';
+            closeBtn.style.fontSize = '18px';
+            closeBtn.style.cursor = 'pointer';
+            closeBtn.style.color = '#888';
+            closeBtn.style.transition = 'color 0.2s';
+
+            closeBtn.addEventListener('mouseenter', () => (closeBtn.style.color = '#000'));
+            closeBtn.addEventListener('mouseleave', () => (closeBtn.style.color = '#888'));
+
+            closeBtn.addEventListener('click', () => {
+              gsap.to(editDiv, {
+                opacity: 0,
+                scale: 0,
+                duration: 0.5,
+                ease: 'power2.out',
+                onComplete: () => {
+                  document.body.removeChild(editDiv);
+                  editTagBtn.style.display = 'block';
+                }
+              });
+            });
+
+            const textareaField = document.createElement('textarea');
+            textareaField.style.resize = 'both';
+            textareaField.style.width = '100%';
+            textareaField.style.height = '400px';
+            textareaField.style.padding = '10px';
+            textareaField.style.border = '1px solid #ccc';
+            textareaField.style.borderRadius = '5px';
+            textareaField.style.fontSize = '19px';
+            textareaField.style.lineHeight = '1.5';
+            textareaField.style.boxShadow = '0 2px 5px rgba(0, 0, 0, 0.1)';
+            textareaField.style.marginBottom = '10px';
+            textareaField.value = tag.name;
+
+            const confirmBtn = document.createElement('button');
+            confirmBtn.className = 'btn btn-warning';
+            confirmBtn.innerHTML = 'Confirm';
+
+            editDiv.appendChild(closeBtn);
+            editDiv.appendChild(confirmBtn);
+            editDiv.appendChild(textareaField);
+
+            Object.assign(editDiv.style, {
+              position: 'fixed',
+              top: '50%',
+              left: '50%',
+              width: '50%',
+              transform: 'translate(-50%, -50%) scale(0)',
+              background: '#fff',
+              padding: '20px',
+              borderRadius: '10px',
+              boxShadow: '0 5px 15px rgba(0, 0, 0, 0.3)',
+              zIndex: '9999',
+              opacity: '0',
+              boxSizing: 'border-box',
+              cursor: 'move',
+              userSelect: 'none'
+            });
+
+            document.body.appendChild(editDiv);
+            editTagBtn.style.display = 'none';
+
+            gsap.to(editDiv, { opacity: 1, scale: 1, duration: 0.5, ease: 'power2.out' });
+
+            // --- Make editDiv draggable ---
+            let isDragging = false;
+            let offsetX, offsetY;
+
+            editDiv.addEventListener('mousedown', (e) => {
+              // Don’t drag when clicking inside the textarea
+              if (e.target.tagName.toLowerCase() === 'textarea') return;
+              isDragging = true;
+              offsetX = e.clientX - editDiv.getBoundingClientRect().left;
+              offsetY = e.clientY - editDiv.getBoundingClientRect().top;
+              editDiv.style.cursor = 'grabbing';
+            });
+
+            window.addEventListener('mousemove', (e) => {
+              if (!isDragging) return;
+              e.preventDefault();
+              editDiv.style.left = `${e.clientX - offsetX}px`;
+              editDiv.style.top = `${e.clientY - offsetY}px`;
+              editDiv.style.transform = 'scale(1)'; // keep scale stable while dragging
+            });
+
+            window.addEventListener('mouseup', () => {
+              isDragging = false;
+              editDiv.style.cursor = 'move';
+            });
+
+            // Append the editDiv to the body
+            document.body.appendChild(editDiv);
+
+            // Hide the edit button
+            editTagBtn.style.display = 'none';
+
+            // Animate the editDiv into view
+            gsap.fromTo(
+              editDiv,
+              { opacity: 0, scale: 0 },
+              { opacity: 1, scale: 1, duration: 0.5, ease: 'back.out(1.7)' }
+            );            // 假設每個 tag 在 DOM 裡都有唯一 ID (ex: <li data-id="123">)
+            const updateTagElement = (tag) => {
+              const el = document.querySelector(`[data-id="${tag.id}"]`);
+              if (el) {
+                el.innerHTML = tag.name; // 或 innerHTML 視你的需求
+              }
+            };
+            // Confirm button click event
+            confirmBtn.addEventListener('click', () => {
+              const newName = textareaField.value.trim();
+if (newName) {
+  tag.name = newName;
+  tag.updatedAt = new Date().toISOString();
+  updateTagElement(tag);
+} else {
+                showSnackbar('Tag name cannot be empty!');
+              }              gsap.to(editDiv, {
+                opacity: 0,
+                scale: 0,
+                duration: 0.5,
+                ease: 'power2.out',
+                onComplete: () => {
+                  document.body.removeChild(editDiv);
+                  editTagBtn.style.display = 'block';
+                }
+              });
+            });
+          });          
+          
+          function removeTag(tag) {
+            const tagIndex = tagList.findIndex(t => t.name === tag);
+            if (tagIndex !== -1) {
+              undoStack.push({ type: 'remove', tag: tagList[tagIndex] });
+              tagList.splice(tagIndex, 1);
+              renderTags();
+            }
+          }
+
+          const removeTagBtn = tagDiv.querySelector('.remove-tag-btn');
+          removeTagBtn.addEventListener('click', () => {
+            const tagName = tagDiv.dataset.name;
+            removeTag(tagName); // 调用删除标签的函数
+            tagDiv.remove(); // 从 DOM 中删除标签元素
+          });
+
+          const findbtn = tagDiv.querySelector('.button8');
+
+          findbtn.addEventListener('click', () => {
+            const tagName = tagDiv.dataset.name;
+            searchInput.value = tagName;
+            searchInput.dispatchEvent(new Event('input'));
+          });
+
+          fsButton.addEventListener('click', () => {
+      if (!document.fullscreenElement) tagDiv.requestFullscreen().catch(console.warn);
+      else document.exitFullscreen();
+    });
+
+    // 標記「純 img」tag：字串本身是 <img ...>
+if (typeof tag.name === "string" && tag.name.trim().match(/^<img\b/i)) {
+  tagDiv.classList.add("img-only");
+}
+
+
+    // ✅ 最後只 append 一次到「正確的 ul」
+    ul.appendChild(tagDiv);
+  });
+}
+
+      // Function to render pagination controls
+function renderPagination(totalTags) {
+  const totalPages = Math.ceil(totalTags / tagsPerPage);
+  paginationDiv.innerHTML = "";
+
+  const frag = document.createDocumentFragment();
+
+  // === 每頁筆數（放在最左邊）===
+  // const perPageWrap = document.createElement("span");
+  // perPageWrap.style.display = "inline-flex";
+  // perPageWrap.style.alignItems = "center";
+  // perPageWrap.style.gap = "6px";
+  // perPageWrap.style.marginRight = "10px";
+
+  const perPageLabel = document.createElement("span");
+
+  // perPageLabel.textContent = "每頁";
+
+// 建立 input
+const perPageInput = document.createElement("input");
+perPageInput.className = "pagebtn";
+perPageInput.id = "tagsPerPageInput";
+perPageInput.type = "number";
+perPageInput.min = 1;
+perPageInput.step = 1;
+perPageInput.value = tagsPerPage;
+
+// （可選）若你要固定寬度
+// perPageInput.style.width = "80px";
+
+// 只在「輸入完成」才更新：失焦或按 Enter 後觸發
+perPageInput.addEventListener("change", () => {
+  const v = parseInt(perPageInput.value, 10);
+  const next = Number.isFinite(v) && v >= 1 ? v : tagsPerPageDefault;
+
+  // 值沒變就不要重畫
+  if (next === tagsPerPage) {
+    // 順便把顯示值正規化（可選）
+    perPageInput.value = tagsPerPage;
+    return;
+  }
+
+  tagsPerPage = next;
+  perPageInput.value = tagsPerPage; // 正規化顯示
+
+  currentPage = 1;    // 改每頁筆數後回到第 1 頁
+  updatePagination(); // 重畫 tags + pagination
+});
+
+// Enter 立即套用（讓 change 立刻發生）
+perPageInput.addEventListener("keydown", (e) => {
+  if (e.key === "Enter") {
+    perPageInput.blur(); // 失焦 -> 觸發 change
+  }
+});
+
+// 掛到 fragment / DOM
+frag.appendChild(perPageInput);
+
+  // === Prev button ===
+  const prevButton = document.createElement("button");
+  prevButton.innerHTML = "Pre";
+  prevButton.className = "pagebtn";
+
+  prevButton.disabled = currentPage === 1;
+  prevButton.onclick = () => changePage(currentPage - 1);
+  frag.appendChild(prevButton);
+
+  // === Page number buttons (顯示前後 2 頁) ===
+  const range = 2;
+  const start = Math.max(1, currentPage - range);
+  const end = Math.min(totalPages, currentPage + range);
+  for (let i = start; i <= end; i++) {
+    const pageBtn = document.createElement("button");
+    pageBtn.className = "pagebtn";
+    pageBtn.innerHTML = i;
+    if (i === currentPage) pageBtn.disabled = true;
+    pageBtn.onclick = () => changePage(i);
+    frag.appendChild(pageBtn);
+  }
+
+  // === Page input + Go button ===
+  const pageInput = document.createElement("input");
+  pageInput.className = "pagebtn";
+  pageInput.type = "number";
+  pageInput.min = 1;
+  pageInput.max = totalPages || 1;
+  pageInput.value = currentPage;
+  frag.appendChild(pageInput);
+
+  const goBtn = document.createElement("button");
+  goBtn.className = "pagebtn";
+  goBtn.innerHTML = "Go";
+  goBtn.onclick = () => {
+    const inputPage = parseInt(pageInput.value, 10);
+    if (inputPage >= 1 && inputPage <= totalPages) {
+      changePage(inputPage);
+    } else {
+      pageInput.value = currentPage;
+    }
+  };
+  frag.appendChild(goBtn);
+
+  // === Next button ===
+  const nextButton = document.createElement("button");
+    nextButton.className = "pagebtn";
+
+  nextButton.innerHTML = "Next";
+  nextButton.disabled = currentPage === totalPages || totalPages === 0;
+  nextButton.onclick = () => changePage(currentPage + 1);
+  frag.appendChild(nextButton);
+
+  paginationDiv.appendChild(frag);
+}
+function renderPaginationInto(container, totalItems, currentPage, perPage, onPageChange, onPerPageChange) {
+  const totalPages = Math.max(1, Math.ceil(totalItems / perPage));
+  currentPage = Math.min(currentPage, totalPages);
+
+  container.innerHTML = "";
+
+  const prev = document.createElement("button");
+  prev.textContent = "Prev";
+  prev.disabled = currentPage <= 1;
+  prev.addEventListener("click", () => onPageChange(currentPage - 1));
+
+  const next = document.createElement("button");
+  next.textContent = "Next";
+  next.disabled = currentPage >= totalPages;
+  next.addEventListener("click", () => onPageChange(currentPage + 1));
+
+  const info = document.createElement("span");
+  info.textContent = ` Page ${currentPage} / ${totalPages} `;
+
+  const perPageInput = document.createElement("input");
+  perPageInput.type = "number";
+  perPageInput.min = "1";
+  perPageInput.value = perPage;
+  perPageInput.style.width = "70px";
+  perPageInput.addEventListener("change", () => {
+    const v = Math.max(1, parseInt(perPageInput.value, 10) || 1);
+    onPerPageChange(v);
+  });
+
+  container.appendChild(prev);
+  container.appendChild(info);
+  container.appendChild(next);
+  container.appendChild(document.createTextNode(" Per page: "));
+  container.appendChild(perPageInput);
+}
+      function changePage(page) {
+        currentPage = page;
+        updatePagination();
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+
+// ====== Performance helpers ======
+let _updatePending = false;
+function scheduleUpdatePagination() {
+  if (_updatePending) return;
+  _updatePending = true;
+  requestAnimationFrame(() => {
+    _updatePending = false;
+    updatePagination();
+  });
+}
+
+// 判斷 t.name 是否為「純 img tag」（整段只有 <img ...>，前後允許空白）
+// 特色：不跑整段 regex；只掃前 200 字元，避免 t.name 很大造成卡頓
+function isPureImgTagName(name) {
+  if (typeof name !== "string") return false;
+  const s = name.trim();
+  if (s.length < 5) return false;              // "<img>" 最少也要 5
+  if (s[0] !== "<" || s[s.length - 1] !== ">") return false;
+
+  // 限制只檢查前面一小段，通常足夠判斷是不是 <img ...>
+  const head = s.slice(0, 200).toLowerCase();
+  if (!head.startsWith("<img")) return false;
+
+  // 避免 <image ...> 這類：<img 後面不能接英數（等同於 \b 的效果之一）
+  const c = head[4]; // '<'0 'i'1 'm'2 'g'3 -> 下一個字元 index 4
+  if (c && /[a-z0-9]/.test(c)) return false;
+
+  // 如果你想更嚴格，也可以要求 head 內有 '>' 才算（但不一定在前200內）
+  return true;
+}
+
+// ====== Split cache (avoid repeated full scans) ======
+let _cachedUniqueTagsRef = null;
+let _cachedSplit = { imgTags: [], textTags: [] };
+
+function getSplitTags(uniqueTags) {
+  // 如果 uniqueTags 陣列參考沒變，就直接用快取
+  if (_cachedUniqueTagsRef === uniqueTags) return _cachedSplit;
+
+  _cachedUniqueTagsRef = uniqueTags;
+
+  const imgTags = [];
+  const textTags = [];
+
+  for (const t of uniqueTags) {
+    const name = t?.name;
+    if (isPureImgTagName(name)) imgTags.push(t);
+    else textTags.push(t);
+  }
+
+  _cachedSplit = { imgTags, textTags };
+  return _cachedSplit;
+}
+
+function clampPage(page, totalItems, perPage) {
+  const safePerPage = Math.max(1, perPage | 0);
+  const maxPage = Math.max(1, Math.ceil(totalItems / safePerPage));
+  return Math.min(Math.max(1, page | 0), maxPage);
+}
+
+// ====== Your state (ensure these exist somewhere in your code) ======
+// let viewMode, splitWrap, tagListUl, paginationDiv;
+// let uniqueTags;
+// let currentPage;
+// let imgCurrentPage, textCurrentPage;
+// let imgTagsPerPage = 50;     // 建議分開
+// let textTagsPerPage = 50;    // 建議分開
+// const tagListImgUl = ...
+// const tagListTextUl = ...
+
+function updatePagination() {
+  // safety guards
+  if (!tagListUl || !paginationDiv) return;
+
+  const isSplit = (viewMode === "split-img-text");
+
+  if (isSplit) {
+    if (splitWrap) splitWrap.style.display = "grid";
+    tagListUl.style.display = "none";
+    paginationDiv.style.display = "none"; // hide single pagination in split mode
+
+    // 只在 uniqueTags 真的變了才重新分類（避免每次翻頁都掃 t.name）
+    const { imgTags, textTags } = getSplitTags(uniqueTags);
+
+    // clamp pages
+    imgCurrentPage = clampPage(imgCurrentPage, imgTags.length, imgTagsPerPage);
+    textCurrentPage = clampPage(textCurrentPage, textTags.length, textTagsPerPage);
+
+    // render lists
+renderTagsPage(imgTags, imgCurrentPage, tagListImgUl, imgTagsPerPage);
+renderTagsPage(textTags, textCurrentPage, tagListTextUl, textTagsPerPage);
+
+
+
+    // render paginations (each once)
+    renderPaginationInto(
+      document.getElementById("splitPaginationImg"),
+      imgTags.length,
+      imgCurrentPage,
+      imgTagsPerPage,
+      (newPage) => { imgCurrentPage = newPage; scheduleUpdatePagination(); },
+      (newPerPage) => { imgTagsPerPage = newPerPage; imgCurrentPage = 1; scheduleUpdatePagination(); }
+    );
+
+    renderPaginationInto(
+      document.getElementById("splitPaginationText"),
+      textTags.length,
+      textCurrentPage,
+      textTagsPerPage,
+      (newPage) => { textCurrentPage = newPage; scheduleUpdatePagination(); },
+      (newPerPage) => { textTagsPerPage = newPerPage; textCurrentPage = 1; scheduleUpdatePagination(); }
+    );
+
+    applyWordmarksToCurrentTags?.();
+    return;
+  }
+
+  // normal mode
+  if (splitWrap) splitWrap.style.display = "none";
+  tagListUl.style.display = "";
+  paginationDiv.style.display = "";
+
+  // 你的 gridClasses / viewMode class 切換保持原樣
+  tagListUl.classList.remove(...gridClasses);
+  tagListUl.classList.add(viewMode);
+
+  renderTagsPage(uniqueTags, currentPage);
+  renderPagination(uniqueTags.length);
+
+  applyWordmarksToCurrentTags?.();
+}
+      updatePagination();
+
+      applyWordmarksToCurrentTags(); // ✅ re-apply after rendering
+
+    }    
+tagInput.addEventListener('keyup', async (event) => {
+  if (event.key === 'Enter') {
+    let inputValue = tagInput.value.trim();
+    inputValue = inputValue.replace(/—/g, ' — ');
+
+    if (!inputValue) return;
+
+    if (inputValue.length > 500) {
+      addTag(inputValue);
+    } else if (/^http/.test(inputValue)) {
+
+      if (/\.(mp4|webm|ogg)([?#].*)?$/i.test(inputValue)) {
+        addTag(`
+          <video controls autoplay loop muted preload="metadata" aria-label="mv">
+            <source src="${inputValue}" type="video/mp4">
+          </video>
+        `);
+      } else if (/\.(jpg|jpeg|png|gif|webp|avif)([?#].*)?$/i.test(inputValue)) {
+        addTag(`
+          <img src="${inputValue}" alt="Image" loading="lazy" decoding="async"
+               style="opacity:0;transition:opacity 0.8s ease;max-width:100%;"
+               onload="this.style.opacity='1';">
+        `);
+      } else {
+        addTag(inputValue);
+      }
+
+    } else {
+      addTag(inputValue);
+    }
+
+    tagInput.value = '';
+  } else if (event.key === 'Escape') {
+    tagInput.value = '';
+  }
+});
+
+
+    async function isImageUrl(url) {
+      try {
+        const response = await fetch(url, { method: 'HEAD' });
+        const contentType = response.headers.get('Content-Type');
+        return contentType && contentType.startsWith('image/');
+      } catch (error) {
+        console.error('Error checking image URL:', error);
+        return false;
+      }
+    }
+
+
+function tokenize(input) {
+  const tokens = [];
+  let i = 0;
+
+  const isOp = (c) => c === '|' || c === ',' || c === '(' || c === ')';
+
+  while (i < input.length) {
+    while (i < input.length && /\s/.test(input[i])) i++;
+    if (i >= input.length) break;
+
+    const ch = input[i];
+
+    // operators
+    if (isOp(ch)) {
+      tokens.push({ type: 'op', value: ch });
+      i++;
+      continue;
+    }
+
+    // quoted phrase
+    if (ch === '"' || ch === "'") {
+      const quote = ch;
+      i++;
+      let buf = '';
+      while (i < input.length && input[i] !== quote) {
+        if (input[i] === '\\' && i + 1 < input.length) {
+          buf += input[i + 1];
+          i += 2;
+        } else {
+          buf += input[i];
+          i++;
+        }
+      }
+      if (i < input.length && input[i] === quote) i++;
+      tokens.push({ type: 'term', value: buf });
+      continue;
+    }
+
+    // normal token (can include leading '-' here; parser will handle)
+    let buf = '';
+    while (i < input.length && !/\s/.test(input[i]) && !isOp(input[i])) {
+      buf += input[i];
+      i++;
+    }
+    if (buf.length) tokens.push({ type: 'term', value: buf });
+  }
+
+  return tokens;
+}
+function extractTermsFromQuery(q) {
+  const tokens = tokenize(String(q || ""));
+  const out = [];
+
+  for (const t of tokens) {
+    if (t.type !== "term") continue;
+
+    let v = String(t.value || "").trim();
+    if (!v) continue;
+
+    v = v.replace(/^-+/, "").trim();
+    v = v.replace(/[(),|]/g, "").trim();   // ✅ 清掉括號等殘留
+    if (!v) continue;
+
+    out.push(v.toLowerCase());
+  }
+
+  return [...new Set(out)];
+}
+
+function buildRelatedSentencesWithPercentList(fullText, query) {
+  const text = String(fullText || "");
+  const q = String(query || "").trim();
+  if (!text.trim() || !q) return [];
+
+  const terms = extractTermsFromQuery(q); // 你現有函式：會處理 | , () 及去重
+  if (!terms.length) return [];
+
+  const re = new RegExp(terms.map(escapeRegExpLite).join("|"), "gi");
+
+  const ranges = [];
+  let m;
+  let safety = 0;
+
+  while ((m = re.exec(text)) !== null) {
+    const hitIndex = m.index;
+    const [sentStart, sentEnd] = findSentenceRange(text, hitIndex);
+    if (sentEnd > sentStart) ranges.push([sentStart, sentEnd]);
+
+    if (m.index === re.lastIndex) re.lastIndex++;
+    safety++;
+    if (safety > 5000) break; // 防爆：避免極端內容卡死
+  }
+
+  if (!ranges.length) return [];
+
+  // merge overlapping sentence ranges
+  ranges.sort((a, b) => a[0] - b[0]);
+  const merged = [];
+  for (const [a, b] of ranges) {
+    const last = merged[merged.length - 1];
+    if (!last || a > last[1]) merged.push([a, b]);
+    else last[1] = Math.max(last[1], b);
+  }
+
+  const L = Math.max(1, text.length);
+
+  // build list items
+  return merged.map(([start, end], idx) => {
+    const sentence = text.slice(start, end).trim();
+    const pct = (start / L) * 100;
+
+    return {
+      index: idx + 1,
+      start,
+      end,
+      percent: pct, // number
+      sentence
+    };
+  }).filter(x => x.sentence);
+}
+
+function formatRelatedPercentListForClipboard(items) {
+  if (!items || !items.length) return "";
+  return items.map(it => {
+    const p = it.percent.toFixed(1).padStart(5, " "); // e.g. " 12.3"
+    // 你要更精確可以改 toFixed(2)
+    return `[${p}%] ${it.sentence}`;
+  }).join("\n\n");
+}
+
+async function copyTextToClipboardSafe(text) {
+  try {
+    await navigator.clipboard.writeText(text);
+    return true;
+  } catch (e) {
+    // fallback (部分瀏覽器/非 https 會失敗)
+    try {
+      const ta = document.createElement("textarea");
+      ta.value = text;
+      ta.style.position = "fixed";
+      ta.style.left = "-9999px";
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand("copy");
+      document.body.removeChild(ta);
+      return true;
+    } catch {
+      return false;
+    }
+  }
+}
+    let debounceTimeout;
+
+    searchInput.addEventListener('input', (event) => {
+      // Clear the pending timeout, if any
+      clearTimeout(debounceTimeout);
+      // Set a new timeout to render the tags after the user has stopped typing for 200ms
+      debounceTimeout = setTimeout(renderTags, 2000);
+    });
+
+    searchInput.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter') {
+        event.preventDefault();
+        highlightText();
+
+   
+      }
+    });
+
+
+    function highlightInElement(rootEl, query) {
+  const q = (query || "").trim();
+  if (!rootEl || !q) return;
+
+  const terms = extractTermsFromQuery(q);
+  if (!terms.length) return;
+
+  const unionReSrc = terms.map(escapeRegExpLite).join("|");
+  const testRe = new RegExp(unionReSrc, "i");
+
+  const walker = document.createTreeWalker(rootEl, NodeFilter.SHOW_TEXT, null);
+  const nodes = [];
+  while (walker.nextNode()) {
+    const node = walker.currentNode;
+    const p = node.parentElement;
+    if (!p) continue;
+
+    // skip script/style + already highlighted
+    const tag = p.tagName.toLowerCase();
+    if (tag === "script" || tag === "style") continue;
+    if (p.closest(".highlighttext")) continue;
+
+    if (testRe.test(node.nodeValue)) nodes.push(node);
+  }
+
+  for (const node of nodes) {
+    const text = node.nodeValue;
+    if (!text) continue;
+
+    const re = new RegExp(unionReSrc, "gi");
+    const frag = document.createDocumentFragment();
+    let last = 0;
+    let m;
+
+    while ((m = re.exec(text)) !== null) {
+      if (m.index > last) frag.appendChild(document.createTextNode(text.slice(last, m.index)));
+
+      const span = document.createElement("span");
+      span.className = "highlighttext";
+      span.style.background = "#fff37a";
+      span.textContent = m[0];
+      frag.appendChild(span);
+
+      last = m.index + m[0].length;
+      if (m.index === re.lastIndex) re.lastIndex++;
+    }
+
+    if (last < text.length) frag.appendChild(document.createTextNode(text.slice(last)));
+
+    node.parentNode.replaceChild(frag, node);
+  }
+}
+function escapeRegExpLite(s) {
+  return String(s).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+// 判斷某位置是否在句子邊界字元上
+function isSentenceBoundaryChar(ch) {
+  // 覆蓋中英常見句末標點 + 換行
+  return ch === "。" || ch === "．" || ch === "." ||
+         ch === "！" || ch === "!" ||
+         ch === "？" || ch === "?" ||
+         ch === "\n" || ch === "\r";
+}
+
+// 由 match index 找到「所在句子」的 [start, end) 範圍（不含句末標點可自行調整）
+function findSentenceRange(text, index) {
+  const s = String(text || "");
+  const n = s.length;
+  let left = Math.max(0, Math.min(index, n));
+
+  // 往左找上一個邊界
+  let start = 0;
+  for (let i = left - 1; i >= 0; i--) {
+    if (isSentenceBoundaryChar(s[i])) {
+      start = i + 1;
+      break;
+    }
+  }
+
+  // 往右找下一個邊界
+  let end = n;
+  for (let i = left; i < n; i++) {
+    if (isSentenceBoundaryChar(s[i])) {
+      end = i; // 不含標點；如果想包含標點，用 end = i + 1
+      break;
+    }
+  }
+
+  // trim 左右空白（避免片段開頭一堆空格）
+  while (start < end && /\s/.test(s[start])) start++;
+  while (end > start && /\s/.test(s[end - 1])) end--;
+
+  return [start, end];
+}
+
+function splitTextIntoChunksNoCut(text, chunkSize = 10000) {
+  const chunks = [];
+  let i = 0;
+
+  while (i < text.length) {
+    let end = i + chunkSize;
+    if (end < text.length) {
+      const nextBreak = text.slice(end).search(/[\s.,!?;:"'，。！？；：「」【】]/);
+      if (nextBreak >= 0 && nextBreak < 200) {
+        end = end + nextBreak + 1;
+      } else {
+        const prevBreak = text.slice(i, end).lastIndexOf(" ");
+        if (prevBreak > 0) end = i + prevBreak + 1;
+      }
+    }
+    chunks.push(text.slice(i, end));
+    i = end;
+  }
+  return chunks;
+}
+function buildRelatedSnippetsChunks(text, terms, contextLen = 50, chunkLimit = 10000) {
+  const t = String(text || "");
+  if (!t.trim() || !terms || !terms.length) return [];
+
+  const termRe = new RegExp(terms.map(escapeRegExpLite).join("|"), "gi");
+
+  const ranges = [];
+  let m;
+  while ((m = termRe.exec(t)) !== null) {
+    const start = Math.max(0, m.index - contextLen);
+    const end = Math.min(t.length, m.index + m[0].length + contextLen);
+    ranges.push([start, end]);
+    if (m.index === termRe.lastIndex) termRe.lastIndex++;
+  }
+  if (!ranges.length) return [];
+
+  ranges.sort((a, b) => a[0] - b[0]);
+  const merged = [ranges[0]];
+  for (let i = 1; i < ranges.length; i++) {
+    const [s, e] = ranges[i];
+    const last = merged[merged.length - 1];
+    if (s <= last[1]) last[1] = Math.max(last[1], e);
+    else merged.push([s, e]);
+  }
+
+  const snippets = merged.map(([s, e]) => t.slice(s, e).trim()).filter(Boolean);
+  const joined = snippets.join(" … ");
+
+  // 再切成 load more chunk
+  const chunks = [];
+  for (let i = 0; i < joined.length; i += chunkLimit) {
+    chunks.push(joined.slice(i, i + chunkLimit));
+  }
+  return chunks;
+}
+/**
+ * related: 命中句子 + 前後 contextChars 字
+ * - allTerms: 已 lowercased 的 terms array（你 buildHighlightHTML 已有）
+ */
+function buildRelatedSentenceWithContext(text, allTerms, contextChars = 50, maxHits = 30) {
+  const s = String(text || "");
+  if (!s.trim() || !allTerms?.length) return "";
+
+  // OR 命中任何 term
+  const re = new RegExp(allTerms.map(escapeRegExpLite).join("|"), "gi");
+
+  const ranges = [];
+  let m;
+  let hits = 0;
+
+  while ((m = re.exec(s)) !== null) {
+    hits++;
+    const hitIndex = m.index;
+
+    const [sentStart, sentEnd] = findSentenceRange(s, hitIndex);
+
+    const start = Math.max(0, sentStart - contextChars);
+    const end = Math.min(s.length, sentEnd + contextChars);
+
+    ranges.push([start, end]);
+
+    if (m.index === re.lastIndex) re.lastIndex++;
+    if (hits >= maxHits) break;
+  }
+
+  if (!ranges.length) return "";
+
+  // merge overlaps
+  ranges.sort((a, b) => a[0] - b[0]);
+  const merged = [];
+  for (const [a, b] of ranges) {
+    const last = merged[merged.length - 1];
+    if (!last || a > last[1]) merged.push([a, b]);
+    else last[1] = Math.max(last[1], b);
+  }
+
+  // build output
+  return merged.map(([a, b]) => {
+    const leftEll = a > 0 ? "…" : "";
+    const rightEll = b < s.length ? "…" : "";
+    return leftEll + s.slice(a, b) + rightEll;
+  }).join("\n");
+}
+
+/**
+ * 回傳：
+ * - showFull=false：回傳「匹配句子」的高亮 HTML；如果無匹配回傳 ""（用於隱藏）
+ * - showFull=true ：回傳「全文」高亮 HTML（即使冇匹配都照返全文高亮/或你可改）
+ */
+function buildHighlightHTML(originalText, inputValue, mode = "partial") {
+  const q = (inputValue || "").trim();
+  if (!q) return null;
+
+const allTerms = extractTermsFromQuery(q);
+if (!allTerms.length) return null;
+
+// 仍然保留 orGroups 用於 partial 抽句 AND/OR（如果你想 partial 仍用你簡易 split）
+const orGroups = q.split("|").map(group =>
+  group.split(",").map(t => t.trim()).filter(Boolean)
+);
+
+  // 你原本的顏色/regexMap/highlight 逻辑可照舊
+  const colorList = [
+    "#fff37a", "#ffb347", "#77dd77", "#aec6cf",
+    "#f49ac2", "#cbaacb", "#ff6961", "#84b6f4"
+  ];
+  const colorMap = {};
+  allTerms.forEach((t, i) => { colorMap[t] = colorList[i % colorList.length]; });
+
+  const regexMap = {};
+  allTerms.forEach(t => {
+    regexMap[t] = new RegExp(`(${escapeRegExpLite(t)})`, "gi");
+  });
+
+  const text = originalText || "";
+  let baseText = "";
+
+  if (mode === "full") {
+    baseText = text;
+
+} else if (mode === "related") {
+  baseText = buildRelatedSentenceWithContext(text, allTerms, 50);
+  if (!baseText) return "";
+}else {
+    // partial：你原本抽句 logic（保留）
+    const sentences = text
+      .split(/[。．.！!？?\n]/)
+      .map(s => s.trim())
+      .filter(Boolean);
+
+    const matchedSentences = sentences.filter(s => {
+      const lowered = s.toLowerCase();
+      return orGroups.some(andGroup =>
+        andGroup.every(term => lowered.includes(term.toLowerCase()))
+      );
+    });
+
+    if (!matchedSentences.length) return "";
+    baseText = matchedSentences.join(" ...\n");
+  }
+
+  // highlight
+  let html = baseText;
+  allTerms.forEach(t => {
+    html = html.replace(regexMap[t], (m) => {
+      const color = colorMap[t] || "#ffd84d";
+      return `<span class="highlighttext" style="background:${color};">${m}</span>`;
+    });
+  });
+
+  return html.replace(/\n/g, "<br>");
+}
+
+
+function renderHighlightForLi(li, forceMode = null) {
+  const inputValue = searchInput.value.trim();
+  const originalText = li.getAttribute("data-original-text") || "";
+
+  const currentMode = li.getAttribute("data-highlight-mode") || "partial";
+  const mode = forceMode === null ? currentMode : forceMode;
+
+  const html = buildHighlightHTML(originalText, inputValue, mode);
+
+  // partial/related 無匹配就隱藏（full 永遠顯示）
+// related 無匹配就隱藏（full 永遠顯示）
+if (mode === "related" && html === "") {
+  li.style.display = "none";
+  return;
+}
+  li.style.display = "";
+
+  // 只更新內容區，不要覆蓋整個 li
+  const contentEl = li.querySelector(".tag-content");
+  if (contentEl) {
+    // 記住原始 HTML（避免 Full 還原時出問題）
+    if (!contentEl.dataset.originalHtml) {
+      contentEl.dataset.originalHtml = contentEl.innerHTML;
+    }
+    contentEl.innerHTML = (html ?? originalText);
+  }
+
+const fullBtn = li.querySelector('.show-full[data-action="full"]');
+  if (fullBtn) fullBtn.textContent = (mode === "full" ? "(Show less)" : "(Show full)");
+
+  li.setAttribute("data-highlight-mode", mode);
+}
+
+// 事件委派：切換 full/less
+
+function highlightText() {
+  const inputValue = searchInput.value.trim();
+  if (!inputValue) return;
+  activeHighlightQuery = inputValue;
+
+  tagListDiv.querySelectorAll("li.tag").forEach(li => {
+    renderHighlightForLi(li, "related"); // 你已經唔用 partial
+  });
+}
+
+tagListDiv.addEventListener("click", async (e) => {
+  const btn = e.target.closest(".show-full");
+  if (!btn) return;
+
+  const li = btn.closest("li.tag");
+  if (!li) return;
+
+  const action = btn.getAttribute("data-action");
+  const currentMode = li.getAttribute("data-highlight-mode") || "related";
+
+  if (action === "copy-related") {
+    const q = searchInput.value.trim();
+    const originalText = li.getAttribute("data-original-text") || "";
+
+    const items = buildRelatedSentencesWithPercentList(originalText, q);
+    const out = items.length
+      ? formatRelatedPercentListForClipboard(items)
+      : "(no related sentences found)";
+
+    const ok = await copyTextToClipboardSafe(out);
+    if (typeof showSnackbar === "function") {
+      showSnackbar(ok ? `✅ Copied (${items.length} sentence${items.length === 1 ? "" : "s"})` : "❌ Copy failed");
+    }
+    return;
+  }
+
+  if (action === "full") {
+    renderHighlightForLi(li, currentMode === "full" ? "related" : "full");
+    return;
+  }
+
+  // （可選）如果你想保留舊 related 切換：
+  if (action === "related") {
+    activeHighlightQuery = searchInput.value.trim();
+    renderHighlightForLi(li, "related");
+    return;
+  }
+});
+
+    addTagBtn.addEventListener('click', () => {
+      addTagBtn.style.opacity = 1; // Fade out the button
+      setTimeout(() => {
+        addTag(tagInput.value.trim());
+        addTagBtn.style.transform = 'none'; // Reset the transform after a delay
+        addTagBtn.style.opacity = 1; // Reset the opacity after a delay
+        addTagBtn.style.transition = 'none'; // Reset the transition property
+      }, 1500); // Adjust the delay as needed
+    });
+
+
+    exportBtnformobile.addEventListener('click', async () => {
+      try {
+        // 格式化时间 YYYY-MM-DD-hh-mm-ss
+        const now = new Date();
+        const year = now.getFullYear();
+        const month = String(now.getMonth() + 1).padStart(2, '0');
+        const day = String(now.getDate()).padStart(2, '0');
+        const hour = String(now.getHours()).padStart(2, '0');
+        const minute = String(now.getMinutes()).padStart(2, '0');
+        const second = String(now.getSeconds()).padStart(2, '0');
+        const dateString = `${year}-${month}-${day}-${hour}-${minute}-${second}`;
+
+        // 弹出保存对话框
+        const fileHandle = await window.showSaveFilePicker({
+          suggestedName: `tags-${dateString}.json`,
+          types: [
+            {
+              description: 'JSON 文件',
+              accept: { 'application/json': ['.json'] }
+            }
+          ]
+        });
+
+        // 写入文件
+const exportPayload = {
+  exportedAt: new Date().toISOString(),
+  totalTags: tagList.length,
+  tags: tagList
+};
+
+const exportData = JSON.stringify(exportPayload, null, 2);
+        const writable = await fileHandle.createWritable();
+        await writable.write(new Blob([exportData], { type: 'application/json' }));
+        await writable.close();
+
+        showSnackbar('标签已成功保存！');
+      } catch (error) {
+        console.error('保存失败:', error);
+        showSnackbar('保存失败，请检查浏览器是否支持 File System Access API。');
+      }
+    });    cutboard.addEventListener('click', async () => {
+      const exportData = JSON.stringify(tagList);
+      try {
+        await navigator.clipboard.writeText(exportData);
+
+        showSnackbar('JSON data copied to clipboard!');
+      } catch (error) {
+        console.error(error);
+        showSnackbar('Copy failed!');
+      }
+    });
+
+    importBtn.addEventListener("click", () => {
+      importFileInput.click();
+    });
+
+importFileInput.addEventListener("change", async () => {
+  const importFile = importFileInput.files[0];
+  if (!importFile) {
+    console.error("No file selected");
+    return;
+  }
+
+  try {
+    const fileContent = await importFile.text();
+    const importData = JSON.parse(fileContent);
+
+    let tags = [];
+    let exportedAt = null;
+
+    if (Array.isArray(importData)) {
+      // 舊格式
+      tags = importData;
+    } else if (importData && Array.isArray(importData.tags)) {
+      // 新格式
+      tags = importData.tags;
+      exportedAt = importData.exportedAt || null;
+    } else {
+      console.error("Invalid JSON format");
+      showSnackbar("Invalid JSON format");
+      return;
+    }
+
+    processImportData(tags);
+
+    if (exportedAt) {
+      showSnackbar(`✅ Imported. Exported at: ${exportedAt}`);
+    } else {
+      showSnackbar("✅ Imported.");
+    }
+
+  } catch (error) {
+    console.error("Error reading or processing file:", error);
+    showSnackbar("Import failed");
+  }
+});
+
+    function parseStyles(styleString) {
+      const styleObj = {};
+      styleString.split(";").forEach(rule => {
+        let [prop, value] = rule.split(":");
+        if (prop && value) {
+          prop = prop.trim().replace(/-([a-z])/g, (_, c) => c.toUpperCase());
+          styleObj[prop] = value.trim();
+        }
+      });
+      return styleObj;
+    }
+
+function processImportData(data, index = 0) {
+  const chunk = 50;
+  for (let i = index; i < Math.min(index + chunk, data.length); i++) {
+    const tag = data[i];
+
+    if (!tag.id) tag.id = generateTagId();
+
+    const fallbackTime = new Date().toISOString();
+    if (!tag.createdAt) tag.createdAt = fallbackTime;
+    if (!tag.updatedAt) tag.updatedAt = tag.createdAt;
+
+    const element = document.getElementById(tag.id);
+    if (element && tag.style) {
+      const styles = parseStyles(tag.style);
+      Object.assign(element.style, styles);
+    }
+
+    tagList.push(tag);
+  }
+
+  if (index + chunk < data.length) {
+    requestAnimationFrame(() => processImportData(data, index + chunk));
+  } else {
+    renderTags();
+  }
+}
+    undoBtn.addEventListener('click', () => {
+      undo();
+    });
+
+    sortLengthBtn.addEventListener('click', () => {
+      sortLengthTags();
+    });
+const exportImgTagsBtn = document.getElementById('exportImgTagsBtn');
+      exportImgTagsBtn.addEventListener('click', () => {
+      const imgTags = tagList.filter(tag => tag.name.toLowerCase().includes('img'));
+
+      if (imgTags.length > 0) {
+        const json = JSON.stringify(imgTags, null, 2); // Converts to JSON format
+        const blob = new Blob([json], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'img_tags.json'; // Filename for the downloaded JSON file
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url); // Free up memory
+        showSnackbar('Tags containing "img" exported to img_tags.json');
+      } else {
+        showSnackbar('No tags containing "img" found to export.');
+      }
+    });
+
+
+    // === 自動格式化段落 ===
+    /**
+     * Format mixed Chinese / English paragraphs neatly.
+     * - Adds sentence‑level newlines
+     * - Keeps abbreviations (e.g., i.e., U.S.A.) intact
+     * - Prevents breaking numeric decimals (2.4)
+     * - Repairs misplaced newlines in quotes and parentheses
+     * - Inserts blank lines before numbered sections (e.g., "11. Summary")
+     */
+    const formatParagraphs = str => {
+      if (!str) return "";
+
+      /* -------------------------------------------------------------
+       * STEP 0 · Protect quoted text blocks
+       * ------------------------------------------------------------- */
+      const quotes = [];
+      str = str.replace(/([“”"‘’「『])(.*?)([”"’」』])/gs, (match, open, inner, close) => {
+        const merged = inner.replace(/\s*\n\s*/g, " ").trim();
+        const key = `__QUOTE${quotes.length}__`;
+        quotes.push(`${open}${merged}${close}`);
+        return key;
+      });
+
+      /* -------------------------------------------------------------
+       * STEP 1 · Clean up spacing
+       * ------------------------------------------------------------- */
+      let result = str
+        .replace(/[ \t\u00A0]+/g, " ")   // collapse multiple spaces/tabs
+        .replace(/[ \t]+\n/g, "\n")      // remove trailing spaces before newline
+        .replace(/\n[ \t]+/g, "\n")      // remove leading spaces after newline
+        .trim();
+
+      /* -------------------------------------------------------------
+       * STEP 2 · Sentence splitting
+       * ------------------------------------------------------------- */
+      const abbrev = [
+        "mr", "mrs", "ms", "dr", "prof", "sr", "jr", "vs", "etc",
+        "e\\.g", "i\\.e", "u\\.s\\.a", "u\\.k", "p\\.s"
+      ];
+      const abbrevPattern = abbrev.join("|");
+
+      // --- Chinese punctuation ---
+      result = result.replace(/([。！？!?])([」』”』]?)/g, "$1$2\n");
+
+      // --- English full stops (with modern look‑behind; fallback if unsupported) ---
+      try {
+        result = result.replace(
+          new RegExp(
+            `(?<!\\b(?:${abbrevPattern})\\.)(?<!\\b[A-Z])(?<!\\d)\\.(?!\\d)(\\s+|$)`,
+            "gi"
+          ),
+          ".\n"
+        );
+      } catch {
+        // fallback for old engines without look‑behind
+        result = result.replace(/([^A-Z\d])\.(\s+|$)/g, "$1.\n");
+      }
+
+      /* -------------------------------------------------------------
+       * STEP 3 · Clean multiple newlines & merge punctuation+quotes
+       * ------------------------------------------------------------- */
+      result = result
+        .replace(/([！？!?。\.])\n(?=[」』"')])/g, "$1") // merge quote punctuation
+        .replace(/\n{3,}/g, "\n\n");
+
+      /* -------------------------------------------------------------
+       * STEP 4 · Healing fixes (decimals, abbreviations, parentheses)
+       * ------------------------------------------------------------- */
+      result = result
+        // --- numeric decimals ---
+        .replace(/(\d)\.\s*[\n\s]+\s*(\d)/g, "$1.$2")
+
+        // --- English abbreviations ---
+        .replace(/\b(e|i)\.\s*[\n\s]*g\./gi, (m, p1) => `${p1.toLowerCase()}.g.`)
+        .replace(/\b(u)\.\s*[\n\s]*s\.\s*[\n\s]*a\./gi, "U.S.A.")
+        .replace(/\b(u)\.\s*[\n\s]*k\./gi, "U.K.")
+        .replace(/\b(p)\.\s*[\n\s]*s\./gi, "P.S.")
+
+        // --- Parentheses ---
+        .replace(/\(\s*\n\s*/g, "(")
+        .replace(/\s*\n\s*\)/g, ")");
+
+      /* -------------------------------------------------------------
+       * STEP 5 · Repair closing quotes & numbered sections
+       * ------------------------------------------------------------- */
+      result = result
+        // no newline right before closing quote
+        .replace(/\n(?=」|』|”|")/g, "")
+        // blank line before numbered or titled sections like "11. Summary"
+        .replace(/(」|。」)\s*(\d{1,3}\.\s*\S)/g, "$1\n\n$2")
+        // normalize multiple blank lines
+        .replace(/\n{3,}/g, "\n\n");
+
+      /* -------------------------------------------------------------
+       * STEP 6 · Restore quotes
+       * ------------------------------------------------------------- */
+      quotes.forEach((quote, i) => {
+        result = result.replace(`__QUOTE${i}__`, quote);
+      });
+
+      /* -------------------------------------------------------------
+       * STEP 7 · Final polish
+       * ------------------------------------------------------------- */
+      return result.replace(/[ \t]+\n/g, "\n").trim();
+    };
+
+    // === 移除重複的 tag 並套用格式化 ===
+    const removeDuplicates = () => {
+      const seen = new Set();
+
+      const uniqueTags = tagList.filter(tag => {
+        if (/<(img|iframe|video)\b/i.test(tag.name)) return true;
+
+        // 長文 (>5000字) 不做格式化
+        const isLong = (tag.name || "").length > 5000;
+        const processed = isLong ? tag.name : formatParagraphs(tag.name);
+        const compareKey = processed.toLowerCase();
+
+        if (seen.has(compareKey)) {
+          return false;
+        } else {
+          seen.add(compareKey);
+          if (!isLong) tag.name = processed;
+          return true;
+        }
+      });
+
+      // 更新列表
+      tagList.length = 0;
+      tagList.push(...uniqueTags);
+      renderTags();
+    };
+
+    // 添加 "清除重复数据" 按钮的点击事件监听器
+    removeduplicates.addEventListener('click', removeDuplicates);
+
+
+    // ===== 全域暫存原始標籤資料 =====
+    let originalTagList = [];
+
+    // ⚙️ 初始化保存原始狀態（在第一次 render 後執行一次）
+    function saveOriginalTagListOnce() {
+      if (originalTagList.length === 0 && tagList.length > 0) {
+        originalTagList = JSON.parse(JSON.stringify(tagList));
+        console.log('Original tag list saved ✅');
+      }
+    }
+
+    // === 計算詞頻 + 隱藏句子（只保留英文單字） ===
+function sortByCommonEnglishWordsSentenceLast(order = 'desc', sentenceMinWords = 2) {
+  if (!Array.isArray(tagList) || tagList.length === 0) {
+    showSnackbar('⚠️ No tags to sort!');
+    return;
+  }
+
+  // 第一次執行時保存原始狀態
+  if (typeof originalTagList === 'undefined' || originalTagList.length === 0) {
+    originalTagList = JSON.parse(JSON.stringify(tagList));
+  }
+
+  // 1) 統計所有英文單字詞頻（包含句子內的字）
+  const freq = {};
+  for (const tag of tagList) {
+    if (!tag?.name) continue;
+
+    const words = tag.name
+      .toLowerCase()
+      .trim()
+      .split(/\s+/)
+      .filter(w => /^[a-z]+$/.test(w)); // 只取純英文字母單字
+
+    for (const w of words) {
+      freq[w] = (freq[w] || 0) + 1;
+    }
+  }
+
+  // 2) 拆組：可排序的「英文短語/單字」 vs 句子（放到底部）
+  const sortableTags = [];
+  const sentenceTags = [];
+
+  for (const tag of tagList) {
+    if (!tag?.name) continue;
+
+    const words = tag.name
+      .trim()
+      .split(/\s+/)
+      .filter(Boolean);
+
+    // 只把「全部都是英文字母單字」的內容納入字數判斷與排序
+    const englishWords = words.filter(w => /^[A-Za-z]+$/.test(w));
+    const isAllEnglishWords = englishWords.length === words.length;
+
+    if (!isAllEnglishWords) {
+      // 含非英文（符號、數字、中文等）→ 當句子/雜項，維持原順序放底部
+      sentenceTags.push(tag);
+      continue;
+    }
+
+    // 句子判斷：英文單字數 >= sentenceMinWords → 放到底部
+    if (englishWords.length >= sentenceMinWords) {
+      sentenceTags.push(tag);
+    } else {
+      // 字數 < sentenceMinWords：可以排序（可能是 1 個字，或你設定成 3 時的 2 個字）
+      sortableTags.push(tag);
+    }
+  }
+
+  // 3) 計算每個 sortable tag 的分數
+  //    - 若只有 1 個字：用該字的詞頻
+  //    - 若是多字（例如你設定 sentenceMinWords=3，2字也會進來）：用「各字詞頻總和」
+  const scoredSortable = sortableTags.map(tag => {
+    const ws = tag.name
+      .trim()
+      .toLowerCase()
+      .split(/\s+/)
+      .filter(w => /^[a-z]+$/.test(w));
+
+    const score = ws.reduce((sum, w) => sum + (freq[w] || 0), 0);
+    return { tag, score };
+  });
+
+  // 4) 排序
+  scoredSortable.sort((a, b) =>
+    order === 'desc' ? b.score - a.score : a.score - b.score
+  );
+
+  // 5) 合併：sortable 在前、句子在後（句子維持原順序）
+  const newList = [...scoredSortable.map(s => s.tag), ...sentenceTags];
+
+  // 6) 更新顯示
+  tagList.splice(0, tagList.length, ...newList);
+  renderTags();
+
+  showSnackbar(
+    `✅ Sorted by ${order === 'desc' ? 'most common' : 'rarest'} English words. ` +
+    `Sentences (>= ${sentenceMinWords} words) moved to bottom.`
+  );
+}
+
+    // === 回復原始標籤狀態 ===
+    function resetTagListToOriginal() {
+      if (!originalTagList || originalTagList.length === 0) {
+        showSnackbar('⚠️ No original state saved yet!');
+        return;
+      }
+
+      // 確認有資料
+      tagList.splice(0, tagList.length, ...JSON.parse(JSON.stringify(originalTagList)));
+
+      renderTags();
+      showSnackbar('✅ Restored to original state');
+      console.log('Tag list restored to original state.');
+    }
+
+document
+  .getElementById('sortCommonEnglishSentenceLastBtn')
+  .addEventListener('click', () => {
+    const n = parseInt(document.getElementById('sentenceMinWordsInput')?.value, 10);
+    const sentenceMinWords = Number.isFinite(n) && n >= 1 ? n : 2;
+    sortByCommonEnglishWordsSentenceLast('desc', sentenceMinWords);
+  });
+  
+function attachImageHoverTooltip(container) {
+  container.querySelectorAll("img").forEach(img => {
+    if (img.closest(".img-wrapper")) return;
+    if (img.dataset.tooltipApplied) return;
+
+    const wrapper = document.createElement("span");
+    wrapper.className = "img-wrapper";
+
+    const hotspot = document.createElement("span");
+    hotspot.className = "img-hotspot";
+    hotspot.setAttribute("aria-hidden", "true");
+
+    const popup = document.createElement("span");
+    popup.className = "img-alt-popup";
+    popup.textContent = img.alt || "(no alt text)";
+
+    img.insertAdjacentElement("beforebegin", wrapper);
+    wrapper.append(img, hotspot, popup);
+
+    img.dataset.tooltipApplied = "true";
+  });
+}
+// --- Wordmarks toggle ---
+let wordmarksOn = false;const btnimgtext = document.getElementById("toggleimgtext");
+
+function escapeRegExp(str) {
+  return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+
+// 只在“不是字母/数字/下划线”的位置作为边界（等价于 \b 但更可控）
+function makeBoundaryPattern(raw) {
+  const esc = escapeRegExp(raw);
+  // 左边不是 \w，右边也不是 \w（或到达字符串边界）
+  return `(?<!\\w)${esc}(?!\\w)`;
+}
+
+function replaceTextWithWordmarksInElement(root) {
+  const keys = Object.keys(WORDMARKS)
+    .map(k => k.trim())
+    .filter(Boolean)
+    .sort((a, b) => b.length - a.length);
+
+  if (!keys.length) return;
+
+  // 给每个 key 加边界，避免 app 命中 apple/apps
+  const re = new RegExp(keys.map(makeBoundaryPattern).join("|"), "gi");
+
+  const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, null);
+  const nodes = [];
+  while (walker.nextNode()) nodes.push(walker.currentNode);
+
+  for (const node of nodes) {
+    const text = node.nodeValue;
+    if (!text) continue;
+
+    re.lastIndex = 0;
+    if (!re.test(text)) continue;
+    re.lastIndex = 0;
+
+    const frag = document.createDocumentFragment();
+    let last = 0, m;
+
+    while ((m = re.exec(text)) !== null) {
+      const found = m[0];
+      const key = found.trim().toLowerCase();
+      const src = WORDMARKS[key];
+
+      if (m.index > last) frag.appendChild(document.createTextNode(text.slice(last, m.index)));
+
+      if (src) {
+        const img = document.createElement("img");
+        img.className = "wordmark-img";
+        img.src = src;
+        img.alt = key;
+        img.loading = "lazy";
+        img.decoding = "async";
+        img.style.zoom = "110%"; // or "1.5"
+        img.style.borderRadius = "1%";
+        frag.appendChild(img);
+      } else {
+        frag.appendChild(document.createTextNode(found));
+      }
+
+      last = m.index + found.length;
+    }
+
+    if (last < text.length) frag.appendChild(document.createTextNode(text.slice(last)));
+
+    node.parentNode.replaceChild(frag, node);
+  }
+  
+}
+
+
+function enableTiltForAllImages(root = document) {
+  const clamp = (v, min, max) => Math.max(min, Math.min(max, v));
+  const maxDeg = 10;
+  const delayMs = 1000;
+
+  let hoverImg = null;   // 目前游標所在的 img（用於判斷2秒）
+  let armedImg = null;   // 目前允許 tilt 的 img
+  let timer = null;
+
+  const getImg = (el) => el && el.closest && el.closest("img");
+
+  function clearTimer() {
+    if (timer) {
+      clearTimeout(timer);
+      timer = null;
+    }
+  }
+
+  function setTilt(img, clientX, clientY) {
+    const rect = img.getBoundingClientRect();
+    if (!rect.width || !rect.height) return;
+
+    const x = (clientX - rect.left) / rect.width;
+    const y = (clientY - rect.top) / rect.height;
+
+    const ry = (x - 0.5) * (maxDeg * 2);
+    const rx = -(y - 0.5) * (maxDeg * 2);
+
+    img.style.setProperty("--rx", clamp(rx, -maxDeg, maxDeg) + "deg");
+    img.style.setProperty("--ry", clamp(ry, -maxDeg, maxDeg) + "deg");
+  }
+
+  // 用 pointerover 來「開始2秒倒數」
+  root.addEventListener("pointerover", (e) => {
+    const img = getImg(e.target);
+    if (!img) return;
+
+    // 在同一張圖的子元素間移動，不要重新倒數
+    const from = getImg(e.relatedTarget);
+    if (from === img) return;
+
+    hoverImg = img;
+    armedImg = null;
+    clearTimer();
+
+    timer = setTimeout(() => {
+      if (hoverImg === img) armedImg = img;
+    }, delayMs);
+  });
+
+  // 不用 pointerout reset，但要在「游標離開整張圖」時取消倒數
+  // 這裡用 pointermove 檢查：若移到非 hoverImg，就取消 hoverImg（避免倒數完成錯誤啟用）
+  root.addEventListener("pointermove", (e) => {
+    const imgNow = getImg(e.target);
+
+    // 如果已經離開原本 hoverImg，停止倒數（但不reset角度）
+    if (hoverImg && imgNow !== hoverImg) {
+      hoverImg = null;
+      clearTimer();
+    }
+
+    // 只有 armed 的那張，且游標真的在那張上，才更新 tilt
+    if (armedImg && imgNow === armedImg) {
+      setTilt(armedImg, e.clientX, e.clientY);
+    }
+  });
+
+  // 觸控：通常不延遲（你要延遲也能加）
+  root.addEventListener(
+    "touchmove",
+    (e) => {
+      const t = e.touches[0];
+      if (!t) return;
+      const img = getImg(e.target);
+      if (!img) return;
+      setTilt(img, t.clientX, t.clientY);
+    },
+    { passive: true }
+  );
+}
+
+function enableImageZoom(root = document, options = {}) {
+  const opts = {
+    // zoom strength
+    zoom: 2.5,           // final zoom scale
+    wheelStep: 0.25,
+    maxZoom: 6,
+    // if true: click toggles zoom in/out
+    toggleOnClick: true,
+    ...options,
+  };
+
+  const clamp = (v, min, max) => Math.max(min, Math.min(max, v));
+
+  function ensureZoomWrapper(img) {
+    // Wrap only once so we can clip the zoomed image inside original area
+    if (img.parentElement && img.parentElement.classList.contains("img-zoom-wrap")) {
+      return img.parentElement;
+    }
+
+    const wrap = document.createElement("span");
+    wrap.className = "img-zoom-wrap";
+    wrap.style.position = "relative";
+    wrap.style.display = "inline-block";
+    wrap.style.overflow = "hidden";       // IMPORTANT: clip inside original area
+    wrap.style.lineHeight = "0";
+    wrap.style.touchAction = "none";      // allow touch move w/out page scroll in area
+
+    // Preserve layout size: wrapper adopts the rendered size of the image
+    const rect = img.getBoundingClientRect();
+    wrap.style.width = rect.width + "px";
+    wrap.style.height = rect.height + "px";
+
+    // Insert wrapper around img
+    img.parentNode.insertBefore(wrap, img);
+    wrap.appendChild(img);
+
+    // Make image fill the wrapper so transforms stay inside
+    img.style.width = "100%";
+    img.style.height = "100%";
+    img.style.objectFit = img.style.objectFit || "cover";
+    img.style.transformOrigin = "0 0";
+    img.style.willChange = "transform";
+    img.style.display = "block";
+
+    // Re-sync wrapper size on load (important if image hadn't loaded yet)
+    if (!img.complete) {
+      img.addEventListener(
+        "load",
+        () => {
+          const r = img.getBoundingClientRect();
+          wrap.style.width = r.width + "px";
+          wrap.style.height = r.height + "px";
+        },
+        { once: true }
+      );
+    }
+
+    return wrap;
+  }
+
+  function setZoomAtPoint(img, clientX, clientY, nextScale) {
+    const wrap = ensureZoomWrapper(img);
+    const rect = wrap.getBoundingClientRect();
+
+    const x = clientX - rect.left; // point inside wrapper
+    const y = clientY - rect.top;
+
+    const w = rect.width;
+    const h = rect.height;
+
+    nextScale = clamp(nextScale, 1, opts.maxZoom);
+
+    // Translate so the clicked point stays under the cursor:
+    // transform = translate(tx, ty) scale(s)
+    // For origin 0,0:
+    // tx = x - x*s
+    // ty = y - y*s
+    let tx = x - x * nextScale;
+    let ty = y - y * nextScale;
+
+    // Clamp translation so image always covers the wrapper (no empty gaps)
+    const minTx = w - w * nextScale; // negative
+    const minTy = h - h * nextScale;
+    tx = clamp(tx, minTx, 0);
+    ty = clamp(ty, minTy, 0);
+
+    img.dataset.zoomScale = String(nextScale);
+    img.dataset.zoomTx = String(tx);
+    img.dataset.zoomTy = String(ty);
+
+    img.style.transform = `translate(${tx}px, ${ty}px) scale(${nextScale})`;
+    img.classList.add("is-zoomed");
+  }
+
+  function resetZoom(img) {
+    img.dataset.zoomScale = "1";
+    img.dataset.zoomTx = "0";
+    img.dataset.zoomTy = "0";
+    img.style.transform = "translate(0px, 0px) scale(1)";
+    img.classList.remove("is-zoomed");
+  }
+
+  // Click to zoom into the clicked point (inside original image area)
+  root.addEventListener("click", (e) => {
+    const img = e.target.closest && e.target.closest("img");
+    if (!img) return;
+    if (img.dataset.noZoom === "true") return;
+
+    ensureZoomWrapper(img);
+
+    const isZoomed = img.classList.contains("is-zoomed");
+
+    if (opts.toggleOnClick && isZoomed) {
+      resetZoom(img);
+      return;
+    }
+
+    setZoomAtPoint(img, e.clientX, e.clientY, opts.zoom);
+  });
+
+  // Mouse move (when zoomed) to "pan" within the original area by moving the focus point
+  root.addEventListener("mousemove", (e) => {
+    const img = e.target.closest && e.target.closest("img");
+    if (!img || !img.classList.contains("is-zoomed")) return;
+
+    const currentScale = parseFloat(img.dataset.zoomScale || "1") || 1;
+    setZoomAtPoint(img, e.clientX, e.clientY, currentScale);
+  });
+
+  // Wheel zoom in/out at pointer (still clipped inside image area)
+  root.addEventListener(
+    "wheel",
+    (e) => {
+      const img = e.target.closest && e.target.closest("img");
+      if (!img) return;
+      if (img.dataset.noZoom === "true") return;
+
+      // Only wheel-zoom when already zoomed (so normal page scroll still works)
+      if (!img.classList.contains("is-zoomed")) return;
+
+      e.preventDefault();
+
+      const current = parseFloat(img.dataset.zoomScale || "1") || 1;
+      const direction = Math.sign(e.deltaY);
+      const next = current + (direction > 0 ? -opts.wheelStep : opts.wheelStep);
+
+      if (next <= 1.001) {
+        resetZoom(img);
+        return;
+      }
+
+      setZoomAtPoint(img, e.clientX, e.clientY, next);
+    },
+    { passive: false }
+  );
+
+  // Touch support: move finger to pan focus point
+  root.addEventListener(
+    "touchmove",
+    (e) => {
+      const t = e.touches[0];
+      if (!t) return;
+
+      const img = e.target.closest && e.target.closest("img");
+      if (!img || !img.classList.contains("is-zoomed")) return;
+
+      const currentScale = parseFloat(img.dataset.zoomScale || "1") || 1;
+      setZoomAtPoint(img, t.clientX, t.clientY, currentScale);
+    },
+    { passive: true }
+  );
+
+  // Optional: reset zoom when leaving the image area
+  root.addEventListener(
+    "mouseleave",
+    (e) => {
+      const img = e.target.closest && e.target.closest("img");
+      if (!img) return;
+      // comment out next line if you don't want auto-reset on leave
+      resetZoom(img);
+    },
+    true
+  );
+
+  return { resetZoom };
+}
+
+// usage
+document.addEventListener("DOMContentLoaded", () => {
+  enableTiltForAllImages(document);
+  enableImageZoom(document, { zoom: 3 });
+
+  initOpenCC();
+
+  const btn = document.getElementById("zhToggleBtn");
+  if (btn) {
+    btn.addEventListener("click", () => {
+      setZhMode(zhMode === "hans" ? "hant" : "hans");
+    });
+    // 初始化按鈕文字
+    btn.textContent = zhMode === "hans" ? "简→繁" : "繁→简";
+  }
+});   
+
+// Restore each tag from its own saved original HTML, then (if on) replace
+function applyWordmarksToCurrentTags() {
+  const roots = [tagListUl, tagListImgUl, tagListTextUl].filter(Boolean);
+
+  roots.forEach(root => {
+    root.querySelectorAll(".tag").forEach(tagEl => {
+      const contentEl = tagEl.querySelector(".tag-content") || tagEl.querySelector("li");
+      if (!contentEl) return;
+
+      if (!contentEl.dataset.originalHtml) {
+        contentEl.dataset.originalHtml = contentEl.innerHTML;
+      }
+      contentEl.innerHTML = contentEl.dataset.originalHtml;
+
+      if (wordmarksOn) replaceTextWithWordmarksInElement(contentEl);
+    });
+  });
+}
+
+btnimgtext.addEventListener("click", () => {
+  wordmarksOn = !wordmarksOn;
+  btnimgtext.textContent = `Wordmarks: ${wordmarksOn ? "ON" : "OFF"}`;
+  applyWordmarksToCurrentTags();
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  </script>
+</body>
+
+</html>
