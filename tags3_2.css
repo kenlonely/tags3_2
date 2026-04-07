@@ -1,0 +1,1867 @@
+/* =========================
+   Enhanced System Layer
+   (append at the end)
+   ========================= */
+
+/* 1) Global fixes */
+html {
+  height: 100%;
+}
+
+    body {
+      /* your base styles */
+      display: block;
+      margin: 0;
+      padding: 10px;
+      font-size: 25px;
+      font-family: "Quicksand", ui-sans-serif, system-ui, -apple-system, "Segoe UI",
+        Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif;
+      -webkit-font-smoothing: antialiased;
+      /* NOTE: the line below in your snippet is invalid; keep it simple */
+      /* -moz-osx-font-smoothing: rgb(101, 101, 101) scale; */
+
+      /* use gradient as background */
+      background: linear-gradient(90deg, #f8f9f7, #f4f6f3, #f0f3ee, #ecefe9, #e7ece4, #e3e9df, #efe5db, #dbe2d6, #d7ded1, #d2dbcc);
+            background-size: 300% 300%;
+            
+      /* border-radius: 60% 40% 55% 45% / 45% 55% 45% 55%; */
+      animation: fadeInY 6s ease-in-out infinite, hueMove 5s linear infinite;
+      background-attachment: fixed;  /* optional: keeps gradient stable on scroll */
+      min-height: 100%;
+    }
+
+/* 2) Theme tokens (light default) */
+:root {
+  --bg: #f0f0f0;
+  --panel: #ffffff;
+  --text: #111111;
+  --muted: rgba(0, 0, 0, 0.65);
+  --border: rgba(0, 0, 0, 0.12);
+
+  --primary: #4a90e2;
+  --primary-hover: #2f7ad1;
+  --success: #52b355;
+  --danger: #e11d48;
+
+  --shadow-1: 0 10px 30px rgba(0, 0, 0, 0.15), 0 2px 10px rgba(0, 0, 0, 0.08);
+  --shadow-2: 0 12px 32px rgba(0, 0, 0, 0.25);
+
+  --radius: 12px;
+  --radius-sm: 8px;
+
+  --focus-ring: 0 0 0 3px rgba(59, 130, 246, 0.35);
+}
+
+
+/* 3) Better centered/modal behavior */
+.centered {
+  background-color: var(--panel);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-1);
+
+  /* Improve scrolling */
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable both-edges;
+}
+
+/* Optional: add a dim background if you wrap with .modal-backdrop
+   <div class="modal-backdrop"><div class="centered">...</div></div> */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(2px);
+  z-index: 998;
+}
+
+/* 4) Unified focus style (keyboard accessibility) */
+:where(button, a, input, textarea, select, .tag, .close-button):focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+  border-radius: var(--radius-sm);
+}
+
+/* 5) Inputs – consistent look + better focus */
+:where(input, textarea, select) {
+  color: var(--text);
+  background: #f5f5f5;
+  border: 1px solid transparent;
+}
+
+:where(input, textarea, select):focus {
+  background: #fff;
+  border-color: rgba(59, 130, 246, 0.35);
+  box-shadow: var(--focus-ring);
+}
+
+@media (prefers-color-scheme: dark) {
+  :where(input, textarea, select) {
+    background: rgba(255, 255, 255, 0.06);
+    color: var(--text);
+  }
+
+  :where(input, textarea, select):focus {
+    background: rgba(255, 255, 255, 0.10);
+  }
+}
+
+/* 6) Buttons – stop listing 30 IDs, use one base rule */
+:where(button, input[type="button"], input[type="submit"]) {
+  padding: 10px 18px;
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.65);
+  color: var(--text);
+  cursor: pointer;
+  border-radius: 999px;
+  transition: transform 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+:where(button, input[type="button"], input[type="submit"]):hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.85);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+}
+
+:where(button, input[type="button"], input[type="submit"]):active:not(:disabled) {
+  transform: translateY(0px) scale(0.98);
+  box-shadow: none;
+}
+
+:where(button):disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+/* Optional button variants */
+.btn-primary {
+  background: var(--primary);
+  color: #fff;
+  border-color: transparent;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: var(--primary-hover);
+}
+
+.btn-success {
+  background: var(--success);
+  color: #fff;
+  border-color: transparent;
+}
+
+.btn-danger {
+  background: var(--danger);
+  color: #fff;
+  border-color: transparent;
+}
+div.sticky {
+  position: sticky;
+    opacity: 0.5;
+
+  top: 0;
+  padding: 5px;
+  z-index: 9999;
+}
+div.sticky:hover {
+  opacity: 1;
+}
+
+
+.tag {
+  border-radius: 999px;
+  padding: 4px;
+  position: relative !important;
+  max-width: 99%;
+  word-wrap: break-word;
+  white-space: pre-wrap;
+  color: #3a3e3a;
+  opacity: 0.9 !important;
+  transition: background-position 3s ease;
+  display: inline-block;
+  font-size: 22px;
+  text-shadow: 1px ;
+  font-family: Garamond, serif;
+  text-align: left;
+  font-weight: 10;
+  overflow: hidden; 
+
+}
+.tag img {
+  transform-style: preserve-3d;
+  transition: transform 120ms ease;
+  will-change: transform;
+
+  
+}
+.tag img:hover {
+  transform: perspective(900px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
+}
+
+li.tag.img-only {
+  background: none !important;
+  background-color: transparent !important;
+}
+
+li.tag .tag-content video {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;  /* 完整顯示，可能上下/左右留黑邊 */
+  background: #000;     /* 留邊時更好睇 */
+}
+
+.tag:hover {
+  /* background-color: #b3e6b4; */
+  /* background-image: url("https://upload.wikimedia.org/wikipedia/commons/2/2c/Rotating_earth_%28large%29.gif"); */
+  box-shadow: 0 4px 4px rgba(0, 0, 0, 0.12);
+  background: rgb(239, 250, 245);
+
+  opacity: 1;
+  /* background: linear-gradient(90deg, #f8fafc, #f7fafc, #f9fafc, #f1f5f9);
+            background-size: 300% 300%; */
+      /* border-radius: 60% 40% 55% 45% / 45% 55% 45% 55%; */
+      animation: fadeInY 6s ease-in-out infinite, hueMove 3s linear infinite;
+      filter: drop-shadow(0 18px 40px rgba(0,0,0,.35));
+}
+
+
+ /* active/點擊 */
+ .tag:active {
+   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+ }
+  /* @keyframes blob{
+      0%   { border-radius: 60% 40% 55% 45% / 45% 55% 45% 55%; }
+      33%  { border-radius: 45% 55% 35% 65% / 60% 40% 60% 40%; }
+      66%  { border-radius: 70% 30% 60% 40% / 35% 65% 35% 65%; }
+      100% { border-radius: 60% 40% 55% 45% / 45% 55% 45% 55%; }
+    } */
+
+@keyframes hueMove{
+      0%   { background-position: 0% 50%; }
+
+      50% { background-position: 100% 50%; }
+      100%   { background-position: 0% 50%; }
+
+    }
+
+/* 9) Reduce motion – apply broadly */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* 10) More robust tooltip positioning for your .word-tooltip */
+.word-tooltip {
+  position: fixed;
+  /* ✅ you already commented this, make it real */
+  max-width: min(320px, 80vw);
+}
+
+
+
+
+
+.centered {
+  position: fixed;
+  inset: 50% auto auto 50%;
+  /* same as top:50%; left:50% */
+  transform: translate(-50%, -50%);
+  transform-origin: center;
+  max-width: min(92vw, 720px);
+  /* comfortable reading width */
+  width: clamp(280px, 92vw, 720px);
+  max-height: calc(80vh - 8svh);
+  /* leave breathing room */
+  overflow: auto;
+  /* allow scrolling if needed */
+  -webkit-overflow-scrolling: touch;
+  /* smooth on iOS */
+
+  color: rgb(101, 101, 101);
+  padding: clamp(0.875rem, 2.5vw, 1.25rem);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
+  box-shadow:
+    0 10px 30px rgba(0, 0, 0, 0.15),
+    0 2px 10px rgba(0, 0, 0, 0.08);
+
+  z-index: 999;
+
+  /* Respect device safe areas (notches) */
+  margin:
+    max(12px, env(safe-area-inset-top)) max(12px, env(safe-area-inset-right)) max(12px, env(safe-area-inset-bottom)) max(12px, env(safe-area-inset-left));
+}
+
+/* Typography suited for articles */
+.centered article {
+  line-height: 1.6;
+  font-size: 1rem;
+  font-family: FZShuTi, cursive;
+  /*font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif;*/
+}
+
+.centered h1,
+.centered h2,
+.centered h3 {
+  line-height: 1.25;
+  margin: 0 0 0.6em;
+}
+
+.centered p+p {
+  margin-top: 0.9em;
+}
+
+.centered img,
+.centered video {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+}
+
+/* Better focus visibility if used as a dialog */
+.centered:focus {
+  outline: 3px solid #3b82f6;
+  /* accessible blue */
+  outline-offset: 2px;
+}
+
+/* Optional close button positioning */
+.centered .close-button {
+  position: sticky;
+  top: -0.5rem;
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.4rem 0.6rem;
+  border-radius: 8px;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  background: linear-gradient(90deg, #ced8c7, #cad4c3, #c6d1be, #c2ceb9, #bdcab4, #b9c7af, #b5c3ab, #b1c0a6, #adbda1, #a8b99c);
+  backdrop-filter: saturate(1.2) blur(4px);
+  cursor: pointer;
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .centered {
+    color: #e9e9e9;
+    border-color: rgba(217, 98, 98, 0.12);
+    box-shadow:
+      0 12px 32px rgba(0, 0, 0, 0.6),
+      0 2px 10px rgba(0, 0, 0, 0.4);
+  }
+
+  .centered .close-button {
+    background: rgba(24, 24, 24, 0.85);
+  }
+}
+
+/* Reduce motion when users prefer it */
+@media (prefers-reduced-motion: reduce) {
+  .centered {
+    transition: none !important;
+  }
+}
+
+/* Small screens: allow more height and ensure readability */
+@media (max-width: 480px) {
+  .centered {
+    max-height: calc(100svh - 4svh);
+    border-radius: 10px;
+  }
+}
+
+
+
+
+
+/* active/點擊 */
+.tag:active {
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+/* 可選：加個小的 close button */
+.tag .close {
+  font-size: 12px;
+  font-weight: bold;
+  color: #888;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.tag .close:hover {
+  color: #f33;
+}
+
+/* fadeIn 動畫 */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+
+  to {
+    opacity: 0.95;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@media screen and (max-width: 767px) {
+  #image-container {
+    column-count: 0.5;
+    display: flex;
+
+  }
+}
+
+@media screen and (min-width: 768px) {
+  #image-container {
+    column-count: 2;
+  }
+}
+
+@media screen and (min-width: 1024px) {
+  #image-container {
+    column-count: 3;
+  }
+}
+
+@media screen and (min-width: 1280px) {
+  #image-container {
+    column-count: 4;
+  }
+}
+
+@media screen and (min-width: 1600px) {
+  #image-container {
+    column-count: 5;
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+input, button {
+  vertical-align: middle; /* 或 top */
+}
+
+
+
+
+
+
+
+#search-input {
+  min-height: 30px;
+  font-size: 16px;
+  line-height: 1.5;
+  padding: 10px 12px;
+  border: none;
+  /* 無邊線 */
+  border-radius: 8px;
+  /* 柔和圓角 */
+  outline: none;
+  /* 聚焦時無外框 */
+      background: linear-gradient(90deg, #f8f9f7, #f4f6f3, #f0f3ee, #ecefe9, #e7ece4, #e3e9df, #efe5db, #dbe2d6, #d7ded1, #d2dbcc);
+            background-size: 300% 300%;
+  /* 柔和淺灰底 */
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.397);
+  /* 內陰影簡單立體感 */
+  transition: background 0.2s ease;
+  resize: none;
+  overflow-y: hidden;
+}
+
+#tag-input {
+  width: 100%;
+  min-height: 30px;
+  font-size: 18px;
+  line-height: 1.5;
+  padding: 10px 12px;
+  border: none;
+  /* 無邊線 */
+  border-radius: 8px;
+  /* 柔和圓角 */
+  outline: none;
+  /* 聚焦時無外框 */
+      background: linear-gradient(90deg, #f8f9f7, #f4f6f3, #f0f3ee, #ecefe9, #e7ece4, #e3e9df, #efe5db, #dbe2d6, #d7ded1, #d2dbcc);
+            background-size: 300% 300%;
+  /* 柔和淺灰底 */
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.1);
+  /* 內陰影簡單立體感 */
+  transition: background 0.2s ease;
+  resize: none;
+  overflow-y: hidden;
+}
+
+#tag-input,
+#search-input:focus {
+      background: linear-gradient(90deg, #f8f9f7, #f4f6f3, #f0f3ee, #ecefe9, #e7ece4, #e3e9df, #efe5db, #dbe2d6, #d7ded1, #d2dbcc);
+            background-size: 300% 300%;
+  /* 聚焦時稍微變白 */
+}
+
+/* span {
+
+  border-radius: 5px;
+  padding: 1px 1px;
+
+} */
+
+img {
+  max-width: 100%;
+  /* Responsive image */
+    width: 380px;
+
+  height: auto;
+  /* Maintains aspect ratio */
+  display: block;
+  /* Ensures image is treated as a block */
+  margin: 0 auto;
+  /* Centers the image itself */
+  border-radius: 20px;
+    transform: perspective(1200px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
+    transition: transform 140ms ease;
+    will-change: transform;
+    transform-style: preserve-3d;
+}
+
+img.zoomable{
+  transform-origin: var(--ox, 50%) var(--oy, 50%);
+  transform:
+    perspective(900px)
+    rotateX(var(--rx, 0deg))
+    rotateY(var(--ry, 0deg))
+    scale(var(--s, 1));
+}
+
+.img-wrapper{
+  position: relative;
+  display: inline-block;
+}
+
+.img-hotspot{
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 64px;      /* hotspot size (adjust) */
+  height: 64px;     /* hotspot size (adjust) */
+  z-index: 100;     /* above the image */
+  background: transparent;
+}
+
+/* your tooltip */
+.img-alt-popup {
+  position: absolute;
+  top: 10%;
+  left: 10%;
+  transform: translate(-10%, -10%);
+  background: rgba(0, 0, 0, 0.75);
+  color: white;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 14px;
+  white-space: normal;
+  word-wrap: break-word;
+  overflow-wrap: anywhere;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 99;
+  transition: opacity .25s ease;
+}
+
+/* ONLY show when hovering the hotspot (top-left area) */
+.img-hotspot:hover + .img-alt-popup{
+  opacity: 1;
+}
+
+.q-image {
+  width: 500px;
+  height: auto;
+}
+
+iframe {
+  /*width: 450px;
+  height: 243.125px;  保持 16:9 */
+  /*height: 337.5px; 4:3 比例 */
+  display: block;
+  margin: 0 auto;
+  border: 0;
+  overflow: hidden; /* 重點 */
+}
+
+button:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+.tagnamebtn {
+
+  display: none;
+
+}
+
+ .tagnamebtn {
+  display: block;
+  animation: fade-in 1s;
+}
+
+.tag:not(:hover) .tagnamebtn.did-fade-in {
+  display: block;
+
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+
+  to {
+    opacity: 0.9;
+    transform: scale(1);
+  }
+}
+
+
+
+.tagnamebtn button {
+  width: 50px;
+
+}
+
+
+
+.list {
+  position: fixed;
+  top: 50%;
+  padding: 7px 15px;
+  border: none;
+  border-radius: 5px;
+  background: linear-gradient(90deg, #f8f9f7, #f4f6f3, #f0f3ee, #ecefe9, #e7ece4, #e3e9df, #efe5db, #dbe2d6, #d7ded1, #d2dbcc);
+  background-size: 300% 300%;
+  color: rgb(101, 101, 101);
+  cursor: pointer;
+  transition: opacity 1s ease-in-out, background-color 1s ease-in-out;
+  margin-right: 7px;
+  z-index: 999;
+  width: 100%;
+
+}
+
+/* Show the list on hover or focus */
+.list:hover,
+.list:focus {
+  opacity: 1;
+}
+
+.tag-list,
+.tag-list2,
+.tag-list3,
+.tag-list4,
+.tag-list5 {
+  /* padding: 10px;
+  border-radius: 5px; */
+  font-size: 18px;
+  gap: 8px;
+  justify-content: center;
+}
+
+/* General tag list styles */
+.tag-list {
+  /* display: flex; */
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+  /* padding: 1% 10%; */
+
+  
+}
+
+
+
+/* item style (optional) */
+
+
+
+#tag-list.grid-2,
+#tag-list.grid-3,
+#tag-list.grid-4{
+  display: grid;
+  align-items: start;
+}
+#tag-list.grid-2{ grid-template-columns: repeat(2, minmax(0, 1fr)); }
+#tag-list.grid-3{ grid-template-columns: repeat(3, minmax(0, 1fr)); }
+#tag-list.grid-4{ grid-template-columns: repeat(4, minmax(0, 1fr)); }
+
+/* responsive fallback */
+@media (max-width: 900px){
+  #tag-list.grid-4{ grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+@media (max-width: 700px){
+  #tag-list.grid-3, #tag-list.grid-4{ grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 480px){
+ #tag-list.grid-2, #tag-list.grid-3, #tag-list.grid-4{
+    grid-template-columns: 1fr;
+  }
+}
+
+/* simple "masonry" (not perfect, but common) */
+#tag-list.grid-masonry{
+  column-count: 1;
+  column-gap: 1px;
+}
+#tag-list.grid-masonry > li.tag{
+  display: inline-block;
+  width: 100%;
+}
+@media (max-width: 700px){
+  #tag-list.grid-masonry{ column-count: 2; }
+}
+@media (max-width: 480px){
+  #tag-list.grid-masonry{ column-count: 1; }
+}
+
+
+.split-wrap{
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  align-items: start;
+  gap: 2px;
+
+}
+
+.split-col{
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+
+
+
+/* mobile: stack */
+@media (max-width: 700px){
+  .split-wrap{ grid-template-columns: 1fr; }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* Tag list with horizontal scroll */
+.tag-list2 {
+  white-space: nowrap;
+  overflow-x: auto;
+  /* Enable horizontal scrolling */
+  display: flex;
+  padding: 10px 0;
+  /* Adjust as per your design */
+}
+
+/* Tag list with multi-column layout */
+.tag-list3 {
+  padding: 0;
+  margin: 0;
+  display: flex;
+  justify-content: center;
+  /* horizontally center the content */
+  align-items: center;
+  /* vertically center the content */
+  flex-wrap: wrap;
+  /* Allow the items to wrap */
+  column-gap: 20px;
+  /* Adjust as per your design */
+}
+
+/* Common styles for tag items */
+.tag-list li,
+.tag-list2 li,
+.tag-list3 li {
+  list-style: none;
+  /* padding: 3px 12px; */
+  border-radius: 20px;
+
+  cursor: pointer;
+  transition: transform 1s, background-color 1s;
+  /* Add transitions for a smooth effect */
+  z-index: 2;
+}
+
+/* 
+ .tag-list li:hover,
+ .tag-list2 li:hover,
+ .tag-list3 li:hover {
+   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+   background-color: var(--color-hover);
+   z-index: 998;
+   
+ } */
+
+
+
+
+
+
+/* Add media query for smaller screens */
+@media (max-width: 600px) {
+
+  .tag-list,
+  .tag-list2,
+  .tag-list3 {
+    font-size: 18px;
+  }
+}
+
+
+
+#add-tag-btn,
+#totalnumbers {
+  width: fit-content;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 5px;
+  color: white;
+  cursor: pointer;
+  transition: background-color 1.2s ease-in-out;
+}
+
+.totalCountDiv {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 8px;
+
+  padding: 6px 10px;
+  border-radius: 999px;
+
+  font-size: 20px;
+  line-height: 1;
+  color: #374151; /* slate-ish */
+  white-space: nowrap;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+}
+
+/* 統一樣式 */
+#remove-all-btn,
+#clear-input-btn,
+#save-btn,
+#load-btn,
+#export-btn,
+#cutboard,
+#import-btn,
+#undo-btn,
+#sort-btn,
+#sort-length-btn,
+#random-btn,
+#remove-duplicates,
+#copy-tags-btn,
+#convert-to-upper,
+#convert-to-lower,
+#convert-to-capital,
+#ToggleClassesbtn,
+#togglefontsize,
+.othercount,
+#myBtnmyBtn,
+#randomizeBtn,
+#toggleFullScreenBtn,
+#toggleButton,
+#add-tag-btn,
+#totalnumbers,
+#export-btn-formobile,
+button {
+  padding: 10px 20px;
+  border: none;
+      background: linear-gradient(90deg, #f8f9f7, #f4f6f3, #f0f3ee, #ecefe9, #e7ece4, #e3e9df, #efe5db, #dbe2d6, #d7ded1, #d2dbcc);
+            background-size: 300% 300%;
+
+  color: rgb(101, 101, 101);
+  cursor: pointer;
+  margin: 6px;
+  border-radius: 10% / 90%;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+/* hover 效果 */
+#remove-all-btn:hover,
+#clear-input-btn:hover,
+#save-btn:hover,
+#load-btn:hover,
+#export-btn:hover,
+#cutboard:hover,
+#import-btn:hover,
+#undo-btn:hover,
+#sort-btn:hover,
+#sort-length-btn:hover,
+#reverse-btn:hover,
+#random-btn:hover,
+#remove-duplicates:hover,
+#copy-tags-btn:hover,
+#convert-to-upper:hover,
+#convert-to-lower:hover,
+#convert-to-capital:hover,
+#ToggleClassesbtn:hover,
+#togglefontsize:hover,
+.othercount:hover,
+#myBtnmyBtn:hover,
+#randomizeBtn:hover,
+#toggleFullScreenBtn:hover,
+#toggleButton:hover,
+#add-tag-btn:hover,
+#totalnumbers:hover,
+#export-btn-formobile:hover,
+button:hover {
+      background: linear-gradient(90deg, #f8f9f7, #f4f6f3, #f0f3ee, #ecefe9, #e7ece4, #e3e9df, #efe5db, #dbe2d6, #d7ded1, #d2dbcc);
+            background-size: 300% 300%;
+  /* transform: scale(1.1) rotate(-2deg); */
+  animation: jelly-shake 1.5s infinite ease-in-out;
+}
+
+/* 可選：active 狀態增加回彈 */
+#remove-all-btn:active,
+#clear-input-btn:active,
+#save-btn:active,
+#load-btn:active,
+#export-btn:active,
+#cutboard:active,
+#import-btn:active,
+#undo-btn:active,
+#sort-btn:active,
+#sort-length-btn:active,
+#reverse-btn:active,
+#random-btn:active,
+#remove-duplicates:active,
+#copy-tags-btn:active,
+#convert-to-upper:active,
+#convert-to-lower:active,
+#convert-to-capital:active,
+#ToggleClassesbtn:active,
+#togglefontsize:active,
+.othercount:active,
+#myBtnmyBtn:active,
+#randomizeBtn:active,
+#toggleFullScreenBtn:active,
+#toggleButton:active,
+#add-tag-btn:active,
+#totalnumbers:active,
+#export-btn-formobile:active,
+button:active,
+.totalCountDiv:active {
+  transform: scale(1);
+  animation: none;
+  /* 停止晃動 */
+  border-radius: 50%;
+}
+
+/* jelly 抖動動畫：變化邊角比例 */
+@keyframes jelly-shake {
+      /* 0%   { border-radius: 60% 40% 55% 45% / 45% 55% 45% 55%; }
+      33%  { border-radius: 45% 55% 35% 65% / 60% 40% 60% 40%; }
+      66%  { border-radius: 70% 30% 60% 40% / 35% 65% 35% 65%; }
+      100% { border-radius: 60% 40% 55% 45% / 45% 55% 45% 55%; } */
+      0%,100% { border-radius: 24px 40px 26px 44px; }
+      50%     { border-radius: 48px 22px 46px 20px; }
+}
+video {
+  max-width: 100%;
+  border-radius: 10px;
+  display: block;
+}
+/* width */
+::-webkit-scrollbar {
+  width: 10px;
+  border-radius: 4px;
+
+}
+
+/* Track */
+/* 滾動條本體 */
+::-webkit-scrollbar {
+  width: 10px;
+  /* 垂直 */
+  height: 10px;
+  /* 水平 */
+}
+
+/* 背景軌道 */
+::-webkit-scrollbar-track {
+  background: #f9f9f9;
+  /* 柔和背景 */
+  border-radius: 10px;
+  box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.05);
+}
+
+/* 滾動條手柄 */
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #bbb, #888);
+  /* 漸變色 */
+  border-radius: 10px;
+  border: 2px solid #f9f9f9;
+  /* 與背景軌道分開一點 */
+  transition: all 0.3s ease;
+}
+
+/* Hover 時 */
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #999, #666);
+}
+
+/* Active 拖動時 */
+::-webkit-scrollbar-thumb:active {
+  background: linear-gradient(180deg, #666, #444);
+}
+
+
+
+
+.click-container {
+  display: none;
+  opacity: 0;
+  visibility: none;
+  transition: opacity 1s ease-out, visibility 1s ease-out;
+}
+
+.click-container.show {
+  display: block;
+  opacity: 1;
+  visibility: visible;
+}
+
+.video-container {
+  display: none;
+  opacity: 0;
+  visibility: none;
+  transition: opacity 1s ease-out, visibility 1s ease-out;
+}
+
+.video-container.show {
+  display: block;
+  opacity: 1;
+  visibility: visible;
+}
+
+.unfold-zoom {
+  transform: scaleY(0.005) scaleX(0);
+  animation: unfoldIn 1s cubic-bezier(0.165, 0.84, 0.44, 1) forwards;
+}
+
+.unfold-zoom.show {
+  transform: scaleY(1) scaleX(1);
+  animation: zoomIn 1s cubic-bezier(0.165, 0.84, 0.44, 1) forwards;
+}
+
+@keyframes unfoldIn {
+  0% {
+    transform: scaleY(0.005) scaleX(0);
+  }
+
+  50% {
+    transform: scaleY(0.005) scaleX(1);
+  }
+
+  100% {
+    transform: scaleY(1) scaleX(1);
+  }
+}
+
+@keyframes zoomIn {
+  0% {
+    transform: scale(0);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
+.pagination-controls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  margin-top: 15px;
+
+  font-family: FZShuTi, cursive;
+  /*font-family: sans-serif; */
+
+}
+
+.pagination-controls button {
+  background-color: #52b355;
+  border: none;
+  color: white;
+  padding: 3px 12px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.2s ease;
+
+}
+
+.pagination-controls button:disabled {
+  cursor: not-allowed;
+}
+
+.pagination-controls button:hover:not(:disabled) {
+  background-color: #0056b3;
+}
+
+button {
+  font-size: small;
+}
+
+.page-info {
+  font-size: 18px;
+  color: rgb(101, 101, 101);
+}
+
+
+.active {
+  display: none;
+  animation: fade-in 1s;
+  /* Add any other styles you want to change on click */
+}
+
+
+h4,
+h6 {
+  display: inline-block;
+  flex-wrap: wrap;
+  left: -50%;
+  gap: 8px;
+  justify-content: center;
+
+}
+
+
+h5 {
+  font-size: 30px !important;
+  color: rgb(0, 13, 255) !important;
+}
+h6 {
+  font-size: 30px !important;
+  color: red !important;
+}
+
+#countDiv {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: auto;
+  max-height: 70%;
+  overflow-x: auto;
+  z-index: 1;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+  padding: 8px;
+  opacity: 0.9;
+  columns: 1;
+  /* display: flex; */
+  resize: both;
+  /* Enable resizing */
+  overflow: auto;
+  /* Enable scrollbars after resizing */
+
+}
+
+
+
+
+
+
+/* Style the select element */
+select {
+  padding: 8px 12px;
+  /* Adjust the padding */
+  border: 1px solid #ccc;
+  /* Set the border */
+  border-radius: 4px;
+  /* Add rounded corners */
+  font-size: 18px;
+  /* Set the font size */
+  color: rgb(101, 101, 101);
+  /* Set the text color */
+  background-color: #f8f9fa;
+  /* Set the background color */
+  width: 200px;
+  /* Set the width */
+  /* Add any other desired styles */
+}
+
+/* Style the dropdown arrow */
+select::-ms-expand {
+  display: none;
+  /* Hide the default arrow in IE */
+}
+
+select::after {
+  content: '\25BC';
+  /* Add a custom arrow using CSS content */
+  position: absolute;
+  top: 50%;
+  right: 12px;
+  transform: translateY(-50%);
+  pointer-events: none;
+  /* Prevent the arrow from being clickable */
+  /* Add any other desired arrow styles */
+}
+
+#parentElement2 {
+  display: none;
+  /* Initially hidden */
+  padding: 10px;
+  margin-top: 10px;
+  border: 1px solid #ccc;
+  background-color: #f9f9f9;
+  border-radius: 5px;
+}
+
+#parentElement2.show {
+  display: block;
+  /* Show the element when the 'show' class is added */
+}
+
+#pagination,
+.pagination {
+  position: fixed;
+  bottom: 20px;
+  /* Distance from the bottom */
+  left: 50%;
+  /* Center horizontally */
+  transform: translateX(-50%);
+  /* Adjust position to perfectly center */
+  padding: 3px 12px;
+  font-size: 16px;
+  border: none;
+  border-radius: 20px;
+  transition: transform 0.1s ease;
+  /* Smooth movement */
+  cursor: pointer;
+  z-index: 998;
+}
+
+/* .pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin: 20px 0;
+  z-index: 998;
+
+}
+
+.pagination button {
+  padding: 3px 12px;
+  border: 1px solid #ccc;
+  color: rgb(101, 101, 101);
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background-color 0.3s ease;
+}
+
+.pagination button:hover:not([disabled]) {
+  background-color: #ddd;
+}
+
+.pagination button.active {
+  background-color: #007bff;
+  color: #fff;
+  border-color: #007bff;
+}
+
+.pagination button:disabled {
+  background-color: #e9ecef;
+  color: #6c757d;
+  cursor: not-allowed;
+}
+
+.pagination input {
+  width: 50px;
+  text-align: center;
+  padding: 5px;
+  font-size: 18px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.pagination input:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 3px rgba(0, 123, 255, 0.5);
+}
+
+.pos-tag-btn {
+  margin: 5px;
+  padding: 5px 10px;
+  font-size: 18px;
+  color: white;
+  background-color: #17a2b8;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.pos-tag-btn:hover {
+  background-color: #138496;
+}
+
+.pos-output {
+  margin-top: 10px;
+  padding: 10px;
+  font-size: 18px;
+  line-height: 1.6;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  background-color: #f9f9f9;
+  overflow-wrap: break-word;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.pos-output strong {
+  color: #007bff;
+}
+ */
+
+
+#snackbar {
+  visibility: hidden;
+  min-width: 200px;
+  background-color: #333;
+  color: #fff;
+  text-align: center;
+  border-radius: 4px;
+  padding: 12px;
+  position: fixed;
+  z-index: 9999;
+  left: 50%;
+  bottom: 30px;
+  transform: translateX(-50%);
+  font-size: 24px;
+  opacity: 0;
+  transition: opacity 0.5s, bottom 0.5s;
+}
+
+#snackbar.show {
+  visibility: visible;
+  opacity: 1;
+  bottom: 50px;
+}
+
+
+
+
+#mobilebtn {
+  position: fixed;
+  display: none;
+  padding: 12px 18px;
+  background: linear-gradient(135deg, crimson, #ff4d6d);
+  color: white;
+  border: none;
+  border-radius: 50px;
+  /* pill shape */
+  cursor: pointer;
+  z-index: 10000;
+  font-size: 15px;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+  box-shadow: 0 4px 12px rgba(255, 0, 60, 0.4),
+    inset 0 0 6px rgba(255, 255, 255, 0.3);
+  backdrop-filter: blur(6px);
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease,
+    background 0.35s ease;
+  opacity: 0.3;
+}
+
+#mobilebtn:hover {
+  background: linear-gradient(135deg, #ff4d6d, #ff758f);
+  box-shadow: 0 6px 18px rgba(255, 0, 60, 0.6),
+    inset 0 0 6px rgba(255, 255, 255, 0.5);
+  transform: translateY(-3px) scale(1.05);
+  /* lift effect */
+}
+
+#mobilebtn:active {
+  transform: translateY(-1px) scale(0.97);
+  /* press effect */
+  box-shadow: 0 3px 8px rgba(255, 0, 60, 0.4) inset;
+}
+
+.highlight {
+  background: yellow;
+  font-weight: bold;
+}
+
+.tag-controls {
+  margin-left: 8px;
+}
+
+.tag.lineThrough {
+  text-decoration: line-through;
+}
+
+.floating-controls {
+  position: fixed;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  padding: 6px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  z-index: 2000;
+}
+
+.floating-controls button {
+  margin: 2px;
+}
+
+.pagination {
+  margin-top: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+}
+
+.pagination button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.pagebtn {
+  width: 60px;
+  height: 40px;
+  padding: 3px;
+  background: #fafafa;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+
+/* 半透明背景覆蓋全螢幕 */
+.edit-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  /* 黑色半透明 */
+  display: flex;
+  justify-content: center;
+  /* 水平置中 */
+  align-items: center;
+  /* 垂直置中 */
+  z-index: 3000;
+}
+
+/* 置中的內容框 */
+.edit-modal-content {
+  background: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 1200px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  position: relative;
+}
+
+/* 關閉按鈕 */
+.edit-modal-content .close-btn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  border: none;
+  background: transparent;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+/* 確認按鈕 */
+.edit-modal-content .confirm-btn {
+  align-self: flex-end;
+  padding: 6px 12px;
+  border: none;
+  background: #007bff;
+  color: white;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.edit-modal-content .confirm-btn:hover {
+  background: #0056b3;
+}
+
+.highlighttext {
+  background: linear-gradient(135deg, #fff37a 0%, #ffd84d 100%);
+  font-weight: bold;
+  padding: 0 2px;
+  border-radius: 3px;
+}
+
+.show-full {
+  cursor: pointer;
+  color: #2563eb;
+  font-weight: 500;
+  margin-left: 4px;
+}
+
+/* .show-full:hover {
+  text-decoration: underline;
+} */
+
+.history-chip {
+  display: inline-block;
+  background: #f3f4f6;
+  border: 1px solid #d1d5db;
+  border-radius: 15px;
+  padding: 3px 10px;
+  margin: 2px;
+  cursor: pointer;
+  font-size: 0.9em;
+}
+
+.history-chip:hover {
+  background: #e5e7eb;
+}
+
+.highlighttext {
+  position: relative;
+  display: inline-block;
+  padding: 0.15em 0.3em;
+  border-radius: 0.35em;
+  font-weight: 600;
+  color: rgb(101, 101, 101);
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.highlighttext:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+.show-full {
+  cursor: pointer;
+  color: #2563eb;
+  margin-left: 6px;
+  font-size: 0.85em;
+  transition: color 0.2s;
+}
+
+.show-full:hover {
+  color: #1d4ed8;
+}
+
+word-lookup {
+  cursor: pointer;
+    color: #1d4ed8;
+
+  /* font-weight: bold; */
+  position: relative;
+  transition: color 0.3s, background 0.3s;
+}
+
+word-lookup:hover {
+  color: white;
+  background: #0056d6;
+  border-radius: 4px;
+  /* padding: 0 3px; */
+}
+
+/* Tooltip */
+.word-tooltip {
+  position: absolute;
+  /* 改成 fixed，直接綁定視窗座標 */
+  background: rgba(0, 0, 0, 0.85);
+  color: white;
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-size: 18px;
+  /* 建議縮小，避免太大 */
+  pointer-events: none;
+  /* 避免 tooltip 擋到滑鼠 */
+  z-index: 1000;
+  max-width: 250px;
+  line-height: 1.4;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  display: none;
+  /* 預設不顯示 */
+}
+
+
+/* :root {
+  --color-primary: #4a90e2;
+  --color-primary-soft: #eaf2ff;
+  --color-text-main: #2e3540;
+  --color-text-heading: #233044;
+  --color-text-code: #1e2a3b;
+
+  --color-bg-code-inline: #e7ecf5;
+  --color-bg-code-block: #1e1e1e;
+  --color-bg-quote: #eaf2ff;
+
+  --shadow-soft: 0 6px 18px rgba(90, 120, 180, 0.12);
+  --shadow-strong: 0 6px 16px rgba(0, 0, 0, 0.25);
+
+  --radius-soft: 8px;
+  --radius-medium: 10px;
+  --radius-large: 12px;
+  --line-height-base: 1.7;
+  --line-height-heading: 1.3;
+} */
+
+/* === 標題：層級清楚、左側色條一致 === */
+h1,
+h2,
+h3 {
+  margin: 1.4em 0 0.6em;
+  font-weight: 600;
+  padding-left: 0.6em;
+  border-left: 4px solid var(--color-primary);
+  color: var(--color-text-heading);
+  line-height: var(--line-height-heading);
+}
+
+/* 適度縮小標題間距避免太擁擠 */
+h1 {
+  font-size: 2rem;
+  margin-top: 1.2em;
+}
+
+h2 {
+  font-size: 1.6rem;
+  border-left-width: 3px;
+}
+
+h3 {
+  font-size: 1.3rem;
+  border-left-width: 2px;
+}
+
+/* 手機上標題稍微縮小，避免換行過多 */
+@media (max-width: 600px) {
+  h1 {
+    font-size: 1.7rem;
+  }
+
+  h2 {
+    font-size: 1.45rem;
+  }
+
+  h3 {
+    font-size: 1.2rem;
+  }
+}
+
+/* === 文字：整體乾淨，行距舒服 === */
+p {
+  margin: 0 0 1.2em;
+  color: var(--color-text-main);
+  line-height: var(--line-height-base);
+  text-rendering: optimizeLegibility;
+}
+
+/* === 超連結：細線 hover，顏色與主題一致 === */
+a {
+  color: var(--color-primary);
+  text-decoration: none;
+  position: relative;
+  transition: color 0.2s ease;
+}
+
+a::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -2px;
+  height: 2px;
+  width: 0;
+  background: var(--color-primary);
+  transition: width 0.25s ease;
+}
+
+a:hover {
+  color: #8abbf2;
+  /* 比主色略深一些的 hover 色 */
+}
+
+a:hover::after {
+  width: 100%;
+}
+
+
+
+/* === code 與 pre：呼應 blockquote 的風格 === */
+code {
+  background: var(--color-bg-code-inline);
+  padding: 2px 6px;
+  border-radius: var(--radius-soft);
+  font-family: Consolas, Menlo, Monaco, "SF Mono", monospace;
+  color: var(--color-text-code);
+  font-size: 0.95em;
+}
+
+/* 避免 inline code 被連結下劃線影響 */
+a>code {
+  text-decoration: none;
+}
+
+/* 區塊 code：深色背景 + 柔和陰影 */
+/* pre {
+  background: var(--color-bg-code-block);
+  color: #f6f6f6;
+  padding: 1.1em 1.2em;
+  border-radius: var(--radius-medium);
+  overflow-x: auto;
+  box-shadow: var(--shadow-strong);
+  margin: 1.4em 0;
+  line-height: 1.6;
+}
+
+pre code {
+  background: none;
+  padding: 0;
+  font-size: 0.92em;
+} */
+
+/* 手機上 code 區塊內距略收窄 
+@media (max-width: 600px) {
+  pre {
+    padding: 0.9em 0.9em;
+  }
+}*/
+
+/* === blockquote：與全站風格高度匹配，閱讀感更好 === */
+blockquote {
+  margin: 1.6em 0;
+  padding: 1.4em 1.6em 1.4em 2.4em;
+  background: var(--color-bg-quote);
+  border-left: 6px solid var(--color-primary);
+  border-radius: var(--radius-large);
+  box-shadow: var(--shadow-soft);
+  position: relative;
+}
+
+/* 引號圖樣：稍微下移，讓視覺更平衡 */
+blockquote::before {
+  content: "“";
+  font-size: 3.2em;
+  font-weight: 600;
+  opacity: 0.16;
+  position: absolute;
+  left: 12px;
+  top: -4px;
+  color: var(--color-primary);
+  pointer-events: none;
+}
+
+/* 引文文字：略帶斜體與放大，顏色更沉穩 */
+blockquote p {
+  margin: 0;
+  font-style: italic;
+  color: #1f2b3d;
+  font-size: 1.03em;
+  line-height: 1.8;
+}
+
+/* 若有多段 p，只留第一段斜體，後面改回正常字體 */
+blockquote p+p {
+  margin-top: 0.7em;
+  font-style: normal;
+}
+
+/* blockquote 內的清單、連結同樣跟著風格走 */
+blockquote a {
+  color: var(--color-primary);
+  font-weight: 500;
+}
+
+blockquote ul,
+blockquote ol {
+  margin-top: 0.7em;
+}
+
+/* 手機上 blockquote 內距與引號位置微調 */
+@media (max-width: 600px) {
+  blockquote {
+    padding: 1.2em 1.2em 1.2em 2.1em;
+  }
+
+  blockquote::before {
+    left: 10px;
+    font-size: 2.8em;
+  }
+}
+
+
+
+  .wordmark-img{
+  display:inline-block;
+  width: 3.2em;          /* 必須給寬高，cover 才能裁 */
+  height: 1.4em;
+  /* object-fit: cover;   
+  object-position: center;
+  vertical-align: -0.25em; */
+
+  }
+
+  .is-hidden-tag {
+display: none;
+}
+
+
+
+    .sentence{
+      padding: 0.05em 0.25em;
+      border-radius: 0.45em;
+      transition: background-color .15s ease, box-shadow .15s ease, color .15s ease;
+      cursor: pointer;
+    }
+    .sentence:hover{
+      background: rgba(125,211,252,0.18);
+      box-shadow: 0 0 0 1px rgba(125,211,252,0.35);
+      color: #ffffff;
+    }
+
